@@ -1,0 +1,131 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0e8d9;
+  margin: 0;
+  padding: 20px;
+  background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+  background-repeat: repeat;
+  background-size: auto;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: #fffdf6;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 2px solid #a67843;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5em;
+  color: #3b2e1b;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+input[type="text"], select, input[type="range"] {
+  padding: 12px;
+  font-size: 1em;
+  border-radius: 8px;
+  border: 1px solid #a67843;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 12px;
+  background-color: #d5b47f;
+  color: #3b2e1b;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  width: 100%;
+}
+
+button:hover {
+  background-color: #c59f6d;
+}
+
+label {
+  font-weight: bold;
+  color: #4d3824;
+}
+
+#results {
+  margin-top: 25px;
+  font-size: 1.2em;
+  color: #2e2e2e;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#results span {
+  background-color: #f9e4b7;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  font-weight: bold;
+  letter-spacing: 1px;
+  border: 1px solid #bfa57a;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toggle-btn {
+  flex: 1 1 30%;
+  padding: 10px;
+  background-color: #f0e4cc;
+  color: #3b2e1b;
+  border: 2px solid #a67843;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  text-align: center;
+  min-width: 80px;
+}
+
+.toggle-btn.active {
+  background-color: #d5b47f;
+  border-color: #7b5224;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+}
+
+/* 📱 Media Query for Small Screens */
+@media (max-width: 480px) {
+  .container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+
+  .toggle-btn {
+    flex: 1 1 100%;
+  }
+
+  #results {
+    font-size: 1em;
+  }
+}

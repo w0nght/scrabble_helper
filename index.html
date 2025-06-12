@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scrabble Dictionary</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Scrabble Dictionary</h1>
+    <div class="filters">
+      <input id="letters" placeholder="Enter letters" />
+
+      <div>
+        <label for="wordLength">Word length: <span id="lengthDisplay">5</span></label>
+        <input type="range" id="wordLength" min="2" max="12" value="5" oninput="updateLengthDisplay()" />
+      </div>
+
+<div>
+  <label>Filter mode:</label>
+  <div class="toggle-group">
+    <button class="toggle-btn active" data-mode="greater" onclick="setMode(this)">Greater than</button>
+    <button class="toggle-btn" data-mode="less" onclick="setMode(this)">Less than</button>
+    <button class="toggle-btn" data-mode="equal" onclick="setMode(this)">Exactly</button>
+  </div>
+</div>
+<input type="hidden" id="lengthMode" value="greater">
+      <label>
+        <input type="checkbox" id="showAll" />
+        Show all suggestions
+      </label>
+
+      <button onclick="findWords()">Search</button>
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
