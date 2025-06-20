@@ -9,6 +9,7 @@
 <body>
   <div class="container">
     <h1>Scrabble Dictionary</h1>
+
     <div class="filters">
       <input id="letters" placeholder="Enter letters" />
 
@@ -17,15 +18,29 @@
         <input type="range" id="wordLength" min="2" max="12" value="5" oninput="updateLengthDisplay()" />
       </div>
 
-<div>
-  <label>Filter mode:</label>
-  <div class="toggle-group">
-    <button class="toggle-btn active" data-mode="greater" onclick="setMode(this)">Greater than</button>
-    <button class="toggle-btn" data-mode="less" onclick="setMode(this)">Less than</button>
-    <button class="toggle-btn" data-mode="equal" onclick="setMode(this)">Exactly</button>
-  </div>
-</div>
-<input type="hidden" id="lengthMode" value="greater">
+      <div>
+        <label>Filter mode:</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-mode="greater" onclick="setMode(this)">Greater than</button>
+          <button class="toggle-btn" data-mode="less" onclick="setMode(this)">Less than</button>
+          <button class="toggle-btn" data-mode="equal" onclick="setMode(this)">Exactly</button>
+        </div>
+      </div>
+
+      <!-- ✅ THIS IS THE MISSING INPUT -->
+      <input type="hidden" id="lengthMode" value="greater">
+
+      <div class="position-filter">
+        <label>
+          Require letter at position:
+          <span title="E.g. H at position 2 will find words like 'THE', 'SHE', etc.">🛈</span>
+        </label>
+        <div class="position-inputs">
+          <input type="text" id="requiredLetter" placeholder="Letter (e.g. H)" maxlength="1" />
+          <input type="number" id="requiredPosition" placeholder="Pos (e.g. 2)" min="1" />
+        </div>
+      </div>
+
       <label>
         <input type="checkbox" id="showAll" />
         Show all suggestions
