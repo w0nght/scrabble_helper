@@ -1,43 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scrabble Dictionary</title>
+  <title>Scrabble Helper</title>
+  <link href="https://fonts.cdnfonts.com/css/byte-sized-computing" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+
+  <!--   <header>
+<div class="scrabble-hero-freeform">
+SCRABBLE
+<div class="tile" style="top: 110px; left: 0;">S</div>
+<div class="tile" style="top: 110px; left: 55px;">C</div>
+<div class="tile" style="top: 110px; left: 110px;">R</div>
+<div class="tile" style="top: 110px; left: 165px;">A</div>
+<div class="tile" style="top: 110px; left: 220px;">B</div>
+<div class="tile" style="top: 110px; left: 275px;">B</div>
+<div class="tile shared" style="top: 110px; left: 330px;">L</div>
+<div class="tile" style="top: 110px; left: 385px;">E</div>
+
+HELPER
+<div class="tile" style="top: 0px; left: 330px;">H</div>
+<div class="tile" style="top: 55px; left: 330px;">E</div>
+<div class="tile shared" style="top: 110px; left: 330px;">L</div>
+<div class="tile" style="top: 165px; left: 330px;">P</div>
+<div class="tile" style="top: 220px; left: 330px;">E</div>
+<div class="tile" style="top: 275px; left: 330px;">R</div>
+</div>
+</header>
+-->
   <div class="container">
-    <h1>Scrabble Dictionary</h1>
+    <div class="scrabble-hero-freeform">
+      <!-- SCRABBLE -->
+      <div class="tile" style="top: 110px; left: 0;">S</div>
+      <div class="tile" style="top: 110px; left: 55px;">C</div>
+      <div class="tile" style="top: 110px; left: 110px;">R</div>
+      <div class="tile" style="top: 110px; left: 165px;">A</div>
+      <div class="tile" style="top: 110px; left: 220px;">B</div>
+      <div class="tile" style="top: 110px; left: 275px;">B</div>
+      <div class="tile shared" style="top: 110px; left: 330px;">L</div>
+      <div class="tile" style="top: 110px; left: 385px;">E</div>
 
+      <!-- HELPER -->
+      <div class="tile" style="top: 0px; left: 330px;">H</div>
+      <div class="tile" style="top: 55px; left: 330px;">E</div>
+      <div class="tile shared" style="top: 110px; left: 330px;">L</div>
+      <div class="tile" style="top: 165px; left: 330px;">P</div>
+      <div class="tile" style="top: 220px; left: 330px;">E</div>
+      <div class="tile" style="top: 275px; left: 330px;">R</div>
+    </div>
+    <!-- <h1>Scrabble Helper</h1> -->
     <div class="filters">
-      <input id="letters" placeholder="Enter letters" />
-
+      <input id="letters" type="text" class="scrabble-input" maxlength="12" placeholder="Enter letters" />
       <div>
-        <label for="wordLength">Word length: <span id="lengthDisplay">5</span></label>
+        <label for="wordLength" id="lengthExplanation" class="filter-info">
+          Word length is <span id="lengthDynamic">greater than or equal to 5</span>
+        </label>
         <input type="range" id="wordLength" min="2" max="12" value="5" oninput="updateLengthDisplay()" />
       </div>
 
       <div>
-        <label>Filter mode:</label>
+        <label>Filter by length:</label>
         <div class="toggle-group">
-          <button class="toggle-btn active" data-mode="greater" onclick="setMode(this)">Greater than</button>
-          <button class="toggle-btn" data-mode="less" onclick="setMode(this)">Less than</button>
-          <button class="toggle-btn" data-mode="equal" onclick="setMode(this)">Exactly</button>
+          <button class="toggle-btn active" data-mode="greater" onclick="setMode(this)">≥</button>
+          <button class="toggle-btn" data-mode="less" onclick="setMode(this)">≤</button>
+          <button class="toggle-btn" data-mode="equal" onclick="setMode(this)">==</button>
         </div>
       </div>
 
-      <!-- ✅ THIS IS THE MISSING INPUT -->
-      <input type="hidden" id="lengthMode" value="greater">
+      <input type="hidden" id="lengthMode" value="greater" />
 
       <div class="position-filter">
         <label>
           Require letter at position:
-          <span title="E.g. H at position 2 will find words like 'THE', 'SHE', etc.">🛈</span>
+          <span title="E.g. H at position 2 will find words like 'THE' or 'SHE'">🛈</span>
         </label>
         <div class="position-inputs">
           <input type="text" id="requiredLetter" placeholder="Letter (e.g. H)" maxlength="1" />
-          <input type="number" id="requiredPosition" placeholder="Pos (e.g. 2)" min="1" />
+          <input type="text" id="requiredPosition" placeholder="Pos (1-12)" maxlength="2" />
         </div>
       </div>
 
@@ -54,4 +98,5 @@
 
   <script src="app.js"></script>
 </body>
+
 </html>
