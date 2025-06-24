@@ -102,10 +102,16 @@ document.getElementById("letters").addEventListener("input", (e) => {
   e.target.value = cleaned;
 });
 
+// Required Letter: only A–Z
+document.getElementById("requiredLetter").addEventListener("input", (e) => {
+  const cleaned = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+  e.target.value = cleaned.slice(0, 1); // enforce max 1 letter
+});
+
+// Required Position: only 1–12
 document.getElementById("requiredPosition").addEventListener("input", (e) => {
   let cleaned = e.target.value.replace(/[^0-9]/g, '');
 
-  // Clamp value between 1 and 12
   if (cleaned !== '') {
     let number = parseInt(cleaned, 10);
     if (number < 1) number = 1;
