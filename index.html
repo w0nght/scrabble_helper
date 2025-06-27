@@ -1,182 +1,86 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Scrabble Helper</title>
-        <link
-            href="https://fonts.cdnfonts.com/css/byte-sized-computing"
-            rel="stylesheet"
-        />
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <body>
-        <div class="container">
-            <div class="scrabble-logo-wrapper">
-                <div class="scrabble-hero-grid">
-                    <!-- Row 1 -->
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile">H</div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
 
-                    <!-- Row 2 -->
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile">E</div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scrabble Helper</title>
+    <link href="https://fonts.cdnfonts.com/css/byte-sized-computing" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
 
-                    <!-- Row 3 -->
-                    <div class="tile">S</div>
-                    <div class="tile">C</div>
-                    <div class="tile">R</div>
-                    <div class="tile">A</div>
-                    <div class="tile">B</div>
-                    <div class="tile">B</div>
-                    <div class="tile shared">L</div>
-                    <div class="tile">E</div>
-                    <div class="tile empty"></div>
-
-                    <!-- Row 4 -->
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile">P</div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-
-                    <!-- Row 5 -->
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile">E</div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-
-                    <!-- Row 6 -->
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                    <div class="tile">R</div>
-                    <div class="tile empty"></div>
-                    <div class="tile empty"></div>
-                </div>
+<body>
+    <div class="container">
+        <div class="scrabble-logo-wrapper">
+            <div class="scrabble-hero-grid">
+                <!-- SCRABBLE -->
+                <div class="tile tile-s">S</div>
+                <div class="tile tile-c">C</div>
+                <div class="tile tile-r1">R</div>
+                <div class="tile tile-a">A</div>
+                <div class="tile tile-b1">B</div>
+                <div class="tile tile-b2">B</div>
+                <div class="tile tile-l1 shared">L</div>
+                <div class="tile tile-e1">E</div>
+                <!-- HELPER -->
+                <div class="tile tile-h">H</div>
+                <div class="tile tile-e2">E</div>
+                <div class="tile tile-l2">L</div>
+                <div class="tile tile-p">P</div>
+                <div class="tile tile-e3">E</div>
+                <div class="tile tile-r2">R</div>
             </div>
-
-            <div class="filters">
-                <input
-                    id="letters"
-                    type="text"
-                    class="scrabble-input"
-                    maxlength="12"
-                    placeholder="Enter letters"
-                />
-                <div>
-                    <label
-                        for="wordLength"
-                        id="lengthExplanation"
-                        class="filter-info"
-                    >
-                        Word length is
-                        <span id="lengthDynamic"
-                            >greater than or equal to 5</span
-                        >
-                    </label>
-                    <input
-                        type="range"
-                        id="wordLength"
-                        min="2"
-                        max="12"
-                        value="5"
-                        oninput="updateLengthDisplay()"
-                    />
-                </div>
-
-                <div>
-                    <label>Filter by length:</label>
-                    <div class="toggle-group">
-                        <button
-                            class="toggle-btn active"
-                            data-mode="greater"
-                            onclick="setMode(this)"
-                        >
-                            ≥
-                        </button>
-                        <button
-                            class="toggle-btn"
-                            data-mode="less"
-                            onclick="setMode(this)"
-                        >
-                            ≤
-                        </button>
-                        <button
-                            class="toggle-btn"
-                            data-mode="equal"
-                            onclick="setMode(this)"
-                        >
-                            ==
-                        </button>
-                    </div>
-                </div>
-
-                <input type="hidden" id="lengthMode" value="greater" />
-
-                <div class="position-filter">
-                    <label>
-                        Require letter at position:
-                        <span
-                            title="E.g. H at position 2 will match words like 'THE' or 'SHE'"
-                            >🛈</span
-                        >
-                    </label>
-                    <div class="position-inputs">
-                        <input
-                            type="text"
-                            id="requiredLetter"
-                            placeholder="Letter (A–Z)"
-                            maxlength="1"
-                            title="Enter a single letter A–Z"
-                        />
-                        <input
-                            type="text"
-                            id="requiredPosition"
-                            placeholder="Pos (1–12)"
-                            maxlength="2"
-                            title="Enter a number between 1 and 12"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <label>
-                <input type="checkbox" id="showAll" />
-                Show all suggestions
-            </label>
-
-            <button onclick="findWords()">Search</button>
-
-            <div id="results"></div>
         </div>
 
+        <form class="filters" onsubmit="event.preventDefault(); findWords();">
+            <input id="letters" type="text" class="scrabble-input" maxlength="12" placeholder="Enter letters" />
+            <div>
+                <label for="wordLength" id="lengthExplanation" class="filter-info">
+                    Word length is
+                    <span id="lengthDynamic">greater than or equal to 5</span>
+                </label>
+                <input type="range" id="wordLength" min="2" max="12" value="5" oninput="updateLengthDisplay()" />
+            </div>
+
+            <div>
+                <label>Filter by length:</label>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" data-mode="greater" onclick="setMode(this)">
+                        ≥
+                    </button>
+                    <button class="toggle-btn" data-mode="less" onclick="setMode(this)">
+                        ≤
+                    </button>
+                    <button class="toggle-btn" data-mode="equal" onclick="setMode(this)">
+                        ==
+                    </button>
+                </div>
+            </div>
+
+            <input type="hidden" id="lengthMode" value="greater" />
+
+            <div class="position-filter">
+                <label>
+                    Require letter at position:
+                    <span title="E.g. H at position 2 will match words like 'THE' or 'SHE'">🛈</span>
+                </label>
+                <div class="position-inputs">
+                    <input type="text" id="requiredLetter" placeholder="Letter (A–Z)" maxlength="1" title="Enter a single letter A–Z" />
+                    <input type="text" id="requiredPosition" placeholder="Pos (1–12)" maxlength="2" title="Enter a number between 1 and 12" />
+                </div>
+            </div>
+        </form>
+
+        <label>
+            <input type="checkbox" id="showAll" />
+            Show all suggestions
+        </label>
+        <div>
+            <button onclick="findWords()">Search</button>
+        </div>
+        <div id="results"></div>
+
         <script src="app.js"></script>
-    </body>
+</body>
+
 </html>

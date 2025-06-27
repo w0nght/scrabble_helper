@@ -24,7 +24,7 @@ body {
 .scrabble-hero-grid {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: repeat(6, auto);
+    grid-template-rows: repeat(6, 1fr);
     gap: 2px;
     inline-size: fit-content;
     max-width: 580px;
@@ -35,19 +35,80 @@ body {
     border-radius: 12px;
 }
 
+/* --- Desktop Tile Positioning --- */
+/* Hide the second 'L' tile on desktop by default */
+.tile.tile-l2 {
+    display: none;
+}
+
+/* Place SCRABBLE letters */
+.tile-s {
+    grid-area: 3 / 1;
+}
+
+.tile-c {
+    grid-area: 3 / 2;
+}
+
+.tile-r1 {
+    grid-area: 3 / 3;
+}
+
+.tile-a {
+    grid-area: 3 / 4;
+}
+
+.tile-b1 {
+    grid-area: 3 / 5;
+}
+
+.tile-b2 {
+    grid-area: 3 / 6;
+}
+
+.tile-l1 {
+    grid-area: 3 / 7;
+}
+
+/* This is the shared L */
+.tile-e1 {
+    grid-area: 3 / 8;
+}
+
+/* Place HELPER letters */
+.tile-h {
+    grid-area: 1 / 7;
+}
+
+.tile-e2 {
+    grid-area: 2 / 7;
+}
+
+.tile-p {
+    grid-area: 4 / 7;
+}
+
+.tile-e3 {
+    grid-area: 5 / 7;
+}
+
+.tile-r2 {
+    grid-area: 6 / 7;
+}
+
+
 .tile {
-    width: 100%;
-    /* aspect-ratio: 1; */
-    height: 60px;
-    width: 60px;
+    height: 52px;
+    width: 57px;
     font-family: "Scramble", sans-serif;
     font-weight: bold;
-    font-size: clamp(3rem, 4vw, 4rem);
+    font-size: clamp(3.6rem, 4vw, 4rem);
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 6px;
     padding: 4px;
+    transform: translateX(10px);
 }
 
 .tile.shared {
@@ -127,6 +188,7 @@ button {
     transition: background 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     width: 100%;
+    margin-top: 10px;
 }
 
 button:hover {
@@ -160,7 +222,7 @@ label {
 }
 
 #results small {
-    font-size: 0.75em;
+    font-size: 0.6em;
     color: #6a5d48;
 }
 
@@ -210,9 +272,120 @@ label {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+.filter-info {
+    font-size: 0.95em;
+    color: #5a4530;
+    margin-bottom: 4px;
+    /* font-style: italic; */
+    font-style: italic;
+    /* Uncommented for subtle visual cue */
+}
+
+@media (min-width: 1200px) {
+    .tile {
+        font-size: 3.4rem;
+        /* override clamp max */
+    }
+
+    .scrabble-hero-grid {
+        max-width: 520px;
+        /* reduce spread */
+    }
+}
+
+@media (min-width: 1400px) {
+    .tile {
+        font-size: 3.4rem;
+        /* override max clamp */
+    }
+
+    .scrabble-hero-grid {
+        max-width: 520px;
+        /* reduce spread */
+    }
+}
+
+@media (max-width: 767px) {
+
+    .scrabble-hero-grid {
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(2, auto);
+        gap: 4px;
+        width: fit-content;
+        max-width: 100%;
+        transform: none;
+        /* Reset desktop positioning */
+    }
+
+    /* Reset all explicit grid placements for mobile */
+    .scrabble-hero-grid .tile {}
+
+    /* On mobile, hide SCRABBLE's L and show HELPER's L */
+    .tile-l1 {
+        /* display: none; */
+    }
+
+    .tile.tile-l2 {
+        display: flex;
+    }
+
+    /* Use flex to re-enable centering */
+
+    /* Move all HELPER tiles to the second row */
+    .tile-h,
+    .tile-e2,
+    .tile-l2,
+    .tile-p,
+    .tile-e3,
+    .tile-r2 {
+        grid-row: 2;
+    }
+
+    /* Start 'H' in the 2nd column to center the 6-letter word */
+    .tile-h {
+        grid-column-start: 2;
+    }
+
+    .tile {
+        height: 45px;
+        width: 45px;
+        /* font-size: clamp(3rem, 8vw, 2.5rem); */
+        font-size: 3rem;
+        border-radius: 4px;
+        grid-area: auto;
+    }
+}
+
+@media (max-width: 600px) {
+
+    /* Styles for devices with screen width <= 600px */
+    /* Adjustments to logo size */
+    .scrabble-hero-grid {
+        /* Nudge the logo slightly left on very small screens */
+        transform: translateX(-10px);
+    }
+
+    .tile {
+        width: 34px;
+        height: 34px;
+        font-size: 2.6rem;
+    }
+}
+
 @media (max-width: 480px) {
     .container {
         padding: 20px;
+    }
+
+    .scrabble-hero-grid {
+        /* Nudge the logo slightly left on very small screens */
+        transform: translateX(-10px);
+    }
+
+    .tile {
+        width: 24px;
+        height: 24px;
+        font-size: 2rem;
     }
 
     h1 {
@@ -229,32 +402,5 @@ label {
 
     .position-inputs {
         flex-direction: column;
-    }
-}
-
-.filter-info {
-    font-size: 0.95em;
-    color: #5a4530;
-    margin-bottom: 4px;
-    /* font-style: italic; */
-}
-
-@media (min-width: 1200px) {
-    .tile {
-        font-size: 3.4rem; /* override clamp max */
-    }
-
-    .scrabble-hero-grid {
-        max-width: 520px; /* reduce spread */
-    }
-}
-
-@media (min-width: 1400px) {
-    .tile {
-        font-size: 3.4rem; /* override max clamp */
-    }
-
-    .scrabble-hero-grid {
-        max-width: 520px; /* reduce spread */
     }
 }
