@@ -1,3 +1,4 @@
+/* === Font === */
 @font-face {
     font-family: "Scramble";
     src: url("./src/scramble-font/Scramble-KVBe.ttf") format("truetype");
@@ -5,15 +6,67 @@
     font-style: normal;
 }
 
-body {
-    font-family: "Segoe UI", sans-serif;
-    background: #f0e8d9;
-    margin: 0;
-    padding: 20px;
-    background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png");
+/* === Theme Variables === */
+:root {
+    --page-bg: #F8F5F2;
+    --container-bg: #FFFFFF;
+    --text-primary: #2c3e50;
+    --text-secondary: #5a6875;
+    --text-tertiary: #8a96a1;
+    --border-color: #dcdcdc;
+    --border-color-strong: #b0b0b0;
+    --input-bg: #fdf6e3;
+    --input-bg-secondary: #FFFFFF;
+    --button-bg: #8ab4f8;
+    --button-bg-hover: #6a9ef5;
+    --button-text: #202124;
+    --result-tile-bg: #f1f5f9;
+    --toggle-btn-bg: #e9eef2;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --shadow-color-strong: rgba(0, 0, 0, 0.12);
+    --highlight-color: goldenrod;
 }
 
-/* START - hero grid  */
+[data-theme="dark"] {
+    --page-bg: #202124;
+    --container-bg: #2d2e30;
+    --text-primary: #e8eaed;
+    --text-secondary: #bdc1c6;
+    --text-tertiary: #969ba1;
+    --border-color: #5f6368;
+    --border-color-strong: #8e9399;
+    --input-bg: #3c4043;
+    --input-bg-secondary: #3c4043;
+    --button-bg: #8ab4f8;
+    --button-bg-hover: #9ac0f9;
+    --button-text: #202124;
+    --result-tile-bg: #3c4043;
+    --toggle-btn-bg: #3c4043;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --shadow-color-strong: rgba(0, 0, 0, 0.4);
+}
+
+body {
+    font-family: "Segoe UI", sans-serif;
+    background-color: var(--page-bg);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 20px;
+}
+
+#themeToggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 1.8rem;
+    padding: 6px 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 999;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+}
 
 .scrabble-logo-wrapper {
     display: flex;
@@ -96,7 +149,6 @@ body {
     grid-area: 6 / 7;
 }
 
-
 .tile {
     height: 52px;
     width: 57px;
@@ -112,8 +164,7 @@ body {
 }
 
 .tile.shared {
-    /* background-color: #b28f5d; */
-    color: #b28f5d;
+    color: var(--highlight-color);
 }
 
 .tile.empty {
@@ -121,22 +172,20 @@ body {
     box-shadow: none;
 }
 
-/* END - hero grid  */
-
 .container {
     max-width: 700px;
     margin: 0 auto;
-    background: #fffdf6;
+    background-color: var(--container-bg);
     padding: 30px;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    border: 2px solid #a67843;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    border: 2px solid var(--border-color);
 }
 
 h1 {
     text-align: center;
     font-size: 2.5em;
-    color: #3b2e1b;
+    color: var(--text-primary);
     margin-bottom: 20px;
     letter-spacing: 2px;
 }
@@ -147,57 +196,52 @@ h1 {
     gap: 16px;
 }
 
-.scrabble-input {
+.scrabble-input,
+input[type="text"] {
     font-family: "Scramble", sans-serif;
-    font-size: 1.6em;
     letter-spacing: 8px;
     text-transform: uppercase;
-    padding: 14px;
-    border-radius: 12px;
-    background-color: #f9e4b7;
-    border: 2px solid #a67843;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    color: #3b2e1b;
-    width: 100%;
-    box-sizing: border-box;
 }
 
+.scrabble-input,
 input[type="text"],
 input[type="number"],
 select,
-input[type="range"] {
+input[type="range"],
+.position-inputs input {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: inset 0 1px 3px var(--shadow-color);
     padding: 12px;
-    font-size: 1em;
+    font-size: 1.2em;
     border-radius: 8px;
-    border: 1px solid #a67843;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
     width: 100%;
     box-sizing: border-box;
 }
 
 button {
     padding: 12px;
-    background-color: #d5b47f;
-    color: #3b2e1b;
+    background-color: var(--button-bg);
+    color: var(--button-text);
     font-weight: bold;
     border: none;
     border-radius: 10px;
     font-size: 1.1em;
     cursor: pointer;
     transition: background 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px var(--shadow-color);
     width: 100%;
     margin-top: 10px;
 }
 
 button:hover {
-    background-color: #c59f6d;
+    background-color: var(--button-bg-hover);
 }
 
 label {
     font-weight: bold;
-    color: #4d3824;
+    color: var(--text-primary);
 }
 
 #results {
@@ -208,14 +252,14 @@ label {
 }
 
 #results span {
-    background-color: #fff9ed;
-    border: 1px solid #d6b67c;
+    background-color: var(--result-tile-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px var(--shadow-color);
     padding: 14px 10px;
     font-size: 1.2em;
     font-weight: bold;
-    color: #3b2e1b;
+    color: var(--text-primary);
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -223,11 +267,11 @@ label {
 
 #results small {
     font-size: 0.6em;
-    color: #6a5d48;
+    color: var(--text-tertiary);
 }
 
 #results .high-score {
-    color: goldenrod;
+    color: var(--highlight-color);
     font-weight: bold;
 }
 
@@ -240,9 +284,9 @@ label {
 .toggle-btn {
     flex: 1 1 30%;
     padding: 10px;
-    background-color: #f0e4cc;
-    color: #3b2e1b;
-    border: 2px solid #a67843;
+    background-color: var(--toggle-btn-bg);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
@@ -252,9 +296,9 @@ label {
 }
 
 .toggle-btn.active {
-    background-color: #d5b47f;
-    border-color: #7b5224;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.15);
+    background-color: var(--button-bg);
+    border-color: var(--border-color-strong);
+    box-shadow: inset 0 2px 5px var(--shadow-color);
 }
 
 .position-inputs {
@@ -262,21 +306,11 @@ label {
     gap: 10px;
 }
 
-.position-inputs input {
-    flex: 1;
-    padding: 12px;
-    font-size: 1em;
-    border-radius: 8px;
-    border: 1px solid #a67843;
-    background-color: #fff;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-}
 
 .filter-info {
     font-size: 0.95em;
-    color: #5a4530;
+    color: var(--text-secondary);
     margin-bottom: 4px;
-    /* font-style: italic; */
     font-style: italic;
     /* Uncommented for subtle visual cue */
 }
@@ -284,29 +318,24 @@ label {
 @media (min-width: 1200px) {
     .tile {
         font-size: 3.4rem;
-        /* override clamp max */
     }
 
     .scrabble-hero-grid {
         max-width: 520px;
-        /* reduce spread */
     }
 }
 
 @media (min-width: 1400px) {
     .tile {
         font-size: 3.4rem;
-        /* override max clamp */
     }
 
     .scrabble-hero-grid {
         max-width: 520px;
-        /* reduce spread */
     }
 }
 
 @media (max-width: 767px) {
-
     .scrabble-hero-grid {
         grid-template-columns: repeat(8, 1fr);
         grid-template-rows: repeat(2, auto);
@@ -314,24 +343,12 @@ label {
         width: fit-content;
         max-width: 100%;
         transform: none;
-        /* Reset desktop positioning */
-    }
-
-    /* Reset all explicit grid placements for mobile */
-    .scrabble-hero-grid .tile {}
-
-    /* On mobile, hide SCRABBLE's L and show HELPER's L */
-    .tile-l1 {
-        /* display: none; */
     }
 
     .tile.tile-l2 {
         display: flex;
     }
 
-    /* Use flex to re-enable centering */
-
-    /* Move all HELPER tiles to the second row */
     .tile-h,
     .tile-e2,
     .tile-l2,
@@ -341,7 +358,6 @@ label {
         grid-row: 2;
     }
 
-    /* Start 'H' in the 2nd column to center the 6-letter word */
     .tile-h {
         grid-column-start: 2;
     }
@@ -349,7 +365,6 @@ label {
     .tile {
         height: 45px;
         width: 45px;
-        /* font-size: clamp(3rem, 8vw, 2.5rem); */
         font-size: 3rem;
         border-radius: 4px;
         grid-area: auto;
@@ -357,11 +372,7 @@ label {
 }
 
 @media (max-width: 600px) {
-
-    /* Styles for devices with screen width <= 600px */
-    /* Adjustments to logo size */
     .scrabble-hero-grid {
-        /* Nudge the logo slightly left on very small screens */
         transform: translateX(-10px);
     }
 
@@ -378,7 +389,6 @@ label {
     }
 
     .scrabble-hero-grid {
-        /* Nudge the logo slightly left on very small screens */
         transform: translateX(-10px);
     }
 

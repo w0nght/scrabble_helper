@@ -1,11 +1,11 @@
 let words = [];
 
 fetch("Collins_2019.json")
-.then(res => res.json())
-.then(data => {
-  words = data;
-  console.log("Dictionary loaded:", words.length);
-});
+  .then(res => res.json())
+  .then(data => {
+    words = data;
+    console.log("Dictionary loaded:", words.length);
+  });
 
 const letterScores = {
   A: 1, B: 3, C: 3, D: 2, E: 1,
@@ -30,7 +30,7 @@ function setMode(button) {
   const buttons = document.querySelectorAll('.toggle-btn');
   buttons.forEach(btn => btn.classList.remove('active'));
   button.classList.add('active');
-  
+
   document.getElementById('lengthMode').value = button.dataset.mode;
   updateLengthExplanation();
 }
@@ -42,13 +42,13 @@ function updateLengthDisplay() {
 function updateLengthExplanation() {
   const length = document.getElementById("wordLength").value;
   const mode = document.getElementById("lengthMode").value;
-  
+
   const modeText = {
     greater: "greater than or equal to",
     less: "less than or equal to",
     equal: "exactly"
   };
-  
+
   const label = document.getElementById("lengthDynamic");
   label.textContent = `${modeText[mode]} ${length}`;
 }
@@ -59,13 +59,13 @@ function findWords() {
   const length = parseInt(document.getElementById("wordLength").value);
   const mode = document.getElementById("lengthMode").value;
   const showAll = document.getElementById("showAll").checked;
-  
+
   const requiredLetter = document.getElementById("requiredLetter").value.toUpperCase();
   const requiredPosition = document.getElementById("requiredPosition").value;
-  
+
   const results = words.filter(word => {
     const letters = input.split('');
-    
+
     const isMatch = word.split('').every(l => {
       const index = letters.indexOf(l);
       if (index !== -1) {
@@ -74,26 +74,26 @@ function findWords() {
       }
       return false;
     });
-    
+
     if (!isMatch) return false;
     if (!matchRequiredPosition(word, requiredLetter, requiredPosition)) return false;
-    
+
     if (!showAll) {
       if (mode === "equal" && word.length !== length) return false;
       if (mode === "greater" && word.length < length) return false;
       if (mode === "less" && word.length > length) return false;
     }
-    
+
     return true;
   });
-  
+
   resultDiv.innerHTML = results.length
-  ? results.map(w => {
-    const score = getWordScore(w);
-    const scoreClass = score >= 20 ? "high-score" : "";
-    return `<span><strong>${w}</strong><small class="${scoreClass}"> ${score}</small></span>`;
-  }).join('')
-  : "No matches found.";
+    ? results.map(w => {
+      const score = getWordScore(w);
+      const scoreClass = score >= 20 ? "high-score" : "";
+      return `<span><strong>${w}</strong><small class="${scoreClass}"> ${score}</small></span>`;
+    }).join('')
+    : "No matches found.";
 }
 
 document.getElementById("letters").addEventListener("input", (e) => {
@@ -120,4 +120,22 @@ document.getElementById("requiredPosition").addEventListener("input", (e) => {
   }
 
   e.target.value = cleaned;
+});
+
+// Dark theme logic
+const themeToggle = document.getElementById('themeToggle');
+
+themeToggle.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const isDark = currentTheme === 'dark';
+
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  themeToggle.textContent = isDark ? '🌞' : '🌙';
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  themeToggle.textContent = saved === 'dark' ? '🌙' : '🌞';
 });
