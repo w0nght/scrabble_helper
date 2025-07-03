@@ -7,14 +7,25 @@
     <title>Scrabble Helper</title>
     <link href="https://fonts.cdnfonts.com/css/byte-sized-computing" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <button id="themeToggle" title="Toggle theme">
-        🌞
-    </button>
+    <header id="headerBar">
+        <button id="menuToggle" aria-label="Open Menu">☰</button>
 
-    <div class="container">
+        <nav id="sideMenu">
+            <button id="closeMenu" aria-label="Close Menu">✖</button>
+            <a href="#">Home</a>
+            <a href="#disclaimer">Disclaimer</a>
+            <a href="#contact">Contact</a>
+        </nav>
+
+        <button id="themeToggle" title="Toggle Theme">🌙</button>
+    </header>
+
+    <div id="top" class="container">
         <div class="scrabble-logo-wrapper">
             <div class="scrabble-hero-grid">
                 <!-- SCRABBLE -->
@@ -37,17 +48,18 @@
         </div>
 
         <form class="filters" onsubmit="event.preventDefault(); findWords();">
-            <input id="letters" type="text" class="scrabble-input" maxlength="12" placeholder="Enter letters" />
             <div>
-                <label for="wordLength" id="lengthExplanation" class="filter-info">
-                    Word length is
-                    <span id="lengthDynamic">greater than or equal to 5</span>
-                </label>
-                <input type="range" id="wordLength" min="2" max="12" value="5" oninput="updateLengthDisplay()" />
+                <label>Find words for Scrabble:</label>
+                <input id="letters" type="text" class="scrabble-input" maxlength="12" placeholder="Enter letters" />
             </div>
 
             <div>
                 <label>Filter by length:</label>
+                <label for="wordLength" id="lengthExplanation" class="filter-info">
+                    &#40;Word length is
+                    <span id="lengthDynamic">greater than or equal to 5</span>&#41;
+                </label>
+                <input type="range" id="wordLength" min="2" max="12" value="5" oninput="updateLengthDisplay()" />
                 <div class="toggle-group">
                     <button class="toggle-btn active" data-mode="greater" onclick="setMode(this)">
                         ≥
@@ -62,29 +74,63 @@
             </div>
 
             <input type="hidden" id="lengthMode" value="greater" />
-
-            <div class="position-filter">
+            <div>
                 <label>
                     Require letter at position:
-                    <span title="E.g. H at position 2 will match words like 'THE' or 'SHE'">🛈</span>
+                    <span title="E.g. H at position 2 will match words like 'THE' or 'SHE'"><span class="info-icon" tabindex="0" aria-describedby="tooltip-desc">
+                            <i class="fas fa-info-circle"></i> </span></span>
                 </label>
-                <div class="position-inputs">
-                    <input type="text" id="requiredLetter" placeholder="Letter (A–Z)" maxlength="1" title="Enter a single letter A–Z" />
-                    <input type="text" id="requiredPosition" placeholder="Pos (1–12)" maxlength="2" title="Enter a number between 1 and 12" />
+                <div>
+                    <div class="position-filter">
+                        <div class="position-inputs">
+                            <input type="text" id="requiredLetter" placeholder="A–Z" maxlength="1" title="Enter a single letter A–Z" />
+                            <input type="text" id="requiredPosition" placeholder="1–12" maxlength="2" title="Enter a number between 1 and 12" />
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div>
+                <label>
+                    <input type="checkbox" id="showAll" />
+                    Show all suggestions
+                </label>
+            </div>
+            <div>
+                <button onclick="findWords()">Search</button>
+            </div>
         </form>
-
-        <label>
-            <input type="checkbox" id="showAll" />
-            Show all suggestions
-        </label>
-        <div>
-            <button onclick="findWords()">Search</button>
-        </div>
         <div id="results"></div>
+    </div>
 
-        <script src="app.js"></script>
+    <footer id="footer">
+        <section id="disclaimer">
+            <h2>Disclaimer</h2>
+            <p>
+                Scrabble&copy; is a registered trademark of Hasbro Inc. in the U.S. and Canada and of J.W. Spear & Sons Limited elsewhere.
+                This site is not affiliated with, endorsed by, or sponsored by these companies.
+            </p>
+            <p>
+                All word suggestions and tools provided on this site are for informational and entertainment purposes only.
+                While we strive for accuracy, we do not guarantee the validity or legality of any word for official gameplay.
+            </p>
+            <p>
+                Use of this site is at your own risk. We disclaim any responsibility for consequences resulting from use of this tool in formal competitions or tournaments.
+            </p>
+        </section>
+
+
+        <section id="contact" style="padding: 40px 20px; text-align: center;">
+            <h2>Contact Me</h2>
+            <p>If you have feedback, suggestions, or spot any issues, feel free to reach out:</p>
+            <div class="social-links">
+                <a href="https://github.com/w0nght" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/joey-wong-4-work/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:joeywong4work@gmail.com" target="_blank" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+            </div>
+        </section>
+    </footer>
+
+    <script src="app.js"></script>
 </body>
 
 </html>

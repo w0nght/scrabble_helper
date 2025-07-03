@@ -139,3 +139,23 @@ window.addEventListener('DOMContentLoaded', () => {
   document.documentElement.setAttribute('data-theme', saved);
   themeToggle.textContent = saved === 'dark' ? '🌙' : '🌞';
 });
+
+// Open/Close Menu logic
+const menuToggle = document.getElementById("menuToggle");
+const sideMenu = document.getElementById("sideMenu");
+const closeMenu = document.getElementById("closeMenu");
+
+menuToggle.addEventListener("click", () => {
+  sideMenu.classList.add("open");
+});
+
+closeMenu.addEventListener("click", () => {
+  sideMenu.classList.remove("open");
+});
+
+// Optional: Close menu when a link is clicked
+sideMenu.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    sideMenu.classList.remove("open");
+  });
+});
