@@ -507,12 +507,7 @@ footer section {
     .scrabble-hero-grid {
         margin: 0 auto;
         justify-content: center;
-        transform: none;
-        /* remove the desktop left shift */
-    }
-
-    .scrabble-logo-wrapper {
-        justify-content: center;
+        transform: translateX(-10px);
     }
 
     .tile {
@@ -521,9 +516,6 @@ footer section {
         font-size: clamp(1.8rem, 5vw, 3.4rem);
     }
 
-    h1 {
-        font-size: 1.8em;
-    }
 
     .toggle-btn {
         flex: 1 1 100%;
