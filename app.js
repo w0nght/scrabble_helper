@@ -159,3 +159,17 @@ sideMenu.querySelectorAll("a").forEach(link => {
     sideMenu.classList.remove("open");
   });
 });
+
+// Version Info
+fetch('https://api.github.com/repos/w0nght/scrabble_helper/tags')
+  .then(res => res.json())
+  .then(tags => {
+    if (tags.length > 0) {
+      document.getElementById('version').textContent = `Version: ${tags[0].name} | &copy; 2025 Joey Wong`;
+    } else {
+      document.getElementById('version').textContent = "Version: dev | &copy; 2025 Joey Wong`";
+    }
+  })
+  .catch(() => {
+    document.getElementById('version').textContent = "Version: offline | &copy; 2025 Joey Wong";
+  });
