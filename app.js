@@ -26,17 +26,32 @@ function matchRequiredPosition(word, letter, pos) {
   return word[index] === letter;
 }
 
+// word length group button listener
 function setMode(button) {
-  const buttons = document.querySelectorAll('.toggle-btn');
-  buttons.forEach(btn => btn.classList.remove('active'));
-  button.classList.add('active');
+  const group = button.parentElement;
+  const buttons = group.querySelectorAll(".toggle-btn");
+  buttons.forEach(btn => btn.classList.remove("active"));
+  button.classList.add("active");
+  document.getElementById("lengthMode").value = button.getAttribute("data-mode");
+  console.log("lengthMode:", button.dataset.mode);
+  updateLengthDisplay();
+  updateSummaryLabel();
+}
 
-  document.getElementById('lengthMode').value = button.dataset.mode;
-  updateLengthExplanation();
+// Wildcard group button listener
+function setWildcard(button, count) {
+  const group = button.parentElement;
+  const buttons = group.querySelectorAll(".toggle-btn");
+  buttons.forEach(btn => btn.classList.remove("active"));
+  button.classList.add("active");
+  document.getElementById("wildcardCount").value = count;
+  console.log("wildcardCount:", count);
+  updateSummaryLabel();
 }
 
 function updateLengthDisplay() {
   updateLengthExplanation();
+  updateSummaryLabel();
 }
 
 function updateLengthExplanation() {
@@ -50,51 +65,139 @@ function updateLengthExplanation() {
   };
 
   const label = document.getElementById("lengthDynamic");
-  label.textContent = `${modeText[mode]} ${length}`;
+  label.textContent = ` ${length}`;
 }
 
-function findWords() {
-  const input = document.getElementById("letters").value.toUpperCase();
-  const resultDiv = document.getElementById("results");
+function updateSummaryLabel() {
   const length = parseInt(document.getElementById("wordLength").value);
   const mode = document.getElementById("lengthMode").value;
+  const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
   const showAll = document.getElementById("showAll").checked;
 
+  const modeSymbol = {
+    greater: "≥",
+    less: "≤",
+    equal: "="
+  }[mode];
+
+  let text = "";
+
+  if (showAll) {
+    text = `Showing all suggestions (ignoring length filter), using ${wildcardCount} wildcard${wildcardCount !== 1 ? "s" : ""}`;
+  } else {
+    text = `Searching for words ${modeSymbol} ${length} letters with ${wildcardCount} wildcard${wildcardCount !== 1 ? "s" : ""}`;
+  }
+
+  document.getElementById("summaryLabel").textContent = text;
+}
+
+
+function findWords() {
+  const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
+  const length = parseInt(document.getElementById("wordLength").value);
+  const mode = document.getElementById("lengthMode").value;
+  const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
   const requiredLetter = document.getElementById("requiredLetter").value.toUpperCase();
-  const requiredPosition = document.getElementById("requiredPosition").value;
+  const requiredPosition = parseInt(document.getElementById("requiredPosition").value);
+  const showAll = document.getElementById("showAll").checked;
 
-  const results = words.filter(word => {
-    const letters = input.split('');
+  const allLetters = input + '?'.repeat(wildcardCount);
+  const availableLetters = allLetters.split('');
 
-    const isMatch = word.split('').every(l => {
-      const index = letters.indexOf(l);
-      if (index !== -1) {
-        letters.splice(index, 1);
-        return true;
+  const resultsContainer = document.getElementById("results");
+  const resultsHeader = document.getElementById("resultsHeader");
+  const resultsInfo = document.getElementById("resultsInfo");
+  resultsContainer.innerHTML = '';
+
+  const matches = [];
+
+  for (const word of words) {
+    if (
+      !showAll &&
+      ((mode === "greater" && word.length < length) ||
+        (mode === "less" && word.length > length) ||
+        (mode === "equal" && word.length !== length))
+    ) continue;
+
+    if (!matchRequiredPosition(word, requiredLetter, requiredPosition)) continue;
+
+    const tempLetters = [...availableLetters];
+    const wordLetters = word.toUpperCase().split('');
+    const wildcardIndices = [];
+
+    let valid = true;
+
+    for (let i = 0; i < wordLetters.length; i++) {
+      const l = wordLetters[i];
+      const idx = tempLetters.indexOf(l);
+
+      if (idx !== -1) {
+        tempLetters.splice(idx, 1);
+      } else {
+        const wildIdx = tempLetters.indexOf('?');
+        if (wildIdx !== -1) {
+          wildcardIndices.push(i);
+          tempLetters.splice(wildIdx, 1);
+        } else {
+          valid = false;
+          break;
+        }
       }
-      return false;
-    });
-
-    if (!isMatch) return false;
-    if (!matchRequiredPosition(word, requiredLetter, requiredPosition)) return false;
-
-    if (!showAll) {
-      if (mode === "equal" && word.length !== length) return false;
-      if (mode === "greater" && word.length < length) return false;
-      if (mode === "less" && word.length > length) return false;
     }
 
-    return true;
-  });
+    if (valid) {
+      matches.push({
+        word,
+        wildcards: wildcardIndices,
+        score: getWordScore(word)
+      });
+    }
+    // After collecting matches
+    const sortBy = document.getElementById("sortBy").value;
 
-  resultDiv.innerHTML = results.length
-    ? results.map(w => {
-      const score = getWordScore(w);
-      const scoreClass = score >= 20 ? "high-score" : "";
-      return `<span><strong>${w}</strong><small class="${scoreClass}"> ${score}</small></span>`;
-    }).join('')
-    : "No matches found.";
+    if (sortBy === "score") {
+      matches.sort((a, b) => b.score - a.score);
+    } else if (sortBy === "length") {
+      matches.sort((a, b) => b.word.length - a.word.length);
+    } else if (sortBy === "alpha") {
+      matches.sort((a, b) => a.word.localeCompare(b.word));
+    }
+
+  }
+
+  if (matches.length === 0) {
+    resultsInfo.style.display = "none";
+    resultsContainer.textContent = "No matching words found. 😢";
+    return;
+  }
+
+  // Show result header and update it
+  resultsInfo.style.display = "block";
+  resultsHeader.textContent = `Found ${matches.length} valid word${matches.length !== 1 ? 's' : ''}`;
+
+  const maxLength = Math.max(...matches.map(m => m.word.length));
+
+  for (const match of matches) {
+
+    const span = document.createElement("span");
+
+    span.innerHTML = match.word
+      .split('')
+      .map((char, i) => match.wildcards.includes(i)
+        ? `<span class="wildcard">${char}</span>`
+        : char
+      )
+      .join('') + ` <small>${match.score} pts</small>`;
+
+    if (!showAll && match.word.length === maxLength) {
+      span.classList.add("high-score");
+    }
+
+    resultsContainer.appendChild(span);
+  }
 }
+
+
 
 document.getElementById("letters").addEventListener("input", (e) => {
   // Allow only A-Z letters, uppercase automatically
@@ -122,6 +225,13 @@ document.getElementById("requiredPosition").addEventListener("input", (e) => {
   e.target.value = cleaned;
 });
 
+function clearResults() {
+  document.getElementById("results").innerHTML = '';
+  document.getElementById("resultsHeader").textContent = '';
+  document.getElementById("resultsInfo").style.display = "none";
+}
+
+
 // Dark theme logic
 const themeToggle = document.getElementById('themeToggle');
 
@@ -138,6 +248,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
   themeToggle.textContent = saved === 'dark' ? '🌙' : '🌞';
+  updateSummaryLabel();
 });
 
 // Open/Close Menu logic

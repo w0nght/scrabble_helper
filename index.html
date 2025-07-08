@@ -56,24 +56,27 @@
             <div>
                 <label>Filter by length:</label>
                 <label for="wordLength" id="lengthExplanation" class="filter-info">
-                    &#40;Word length is
-                    <span id="lengthDynamic">greater than or equal to 5</span>&#41;
+                    <span id="lengthDynamic">5</span>
                 </label>
                 <input type="range" id="wordLength" min="2" max="12" value="5" oninput="updateLengthDisplay()" />
                 <div class="toggle-group">
-                    <button class="toggle-btn active" data-mode="greater" onclick="setMode(this)">
-                        ≥
-                    </button>
-                    <button class="toggle-btn" data-mode="less" onclick="setMode(this)">
-                        ≤
-                    </button>
-                    <button class="toggle-btn" data-mode="equal" onclick="setMode(this)">
-                        ==
-                    </button>
+                    <button type="button" class="toggle-btn active" data-mode="greater" onclick="setMode(this)">≥</button>
+                    <button type="button" class="toggle-btn" data-mode="less" onclick="setMode(this)">≤</button>
+                    <button type="button" class="toggle-btn" data-mode="equal" onclick="setMode(this)">==</button>
                 </div>
             </div>
 
             <input type="hidden" id="lengthMode" value="greater" />
+            <div>
+                <label>Wildcards:</label>
+                <div class="toggle-group" id="wildcardToggle">
+                    <button type="button" class="toggle-btn active" onclick="setWildcard(this, 0)">0 Wildcards</button>
+                    <button type="button" class="toggle-btn" onclick="setWildcard(this, 1)">1 Wildcard</button>
+                    <button type="button" class="toggle-btn" onclick="setWildcard(this, 2)">2 Wildcards</button>
+                </div>
+                <input type="hidden" id="wildcardCount" value="0">
+            </div>
+
             <div>
                 <label>
                     Require letter at position:
@@ -91,15 +94,36 @@
             </div>
             <div>
                 <label>
-                    <input type="checkbox" id="showAll" />
+                    <input type="checkbox" id="showAll" onchange="updateSummaryLabel()" />
                     Show all suggestions
                 </label>
             </div>
+            <p id="summaryLabel" class="filter-info"></p>
             <div>
-                <button onclick="findWords()">Search</button>
+                <button onclick="findWords()">Find Words!</button>
             </div>
+            <div>
+                <button type="button" class="clear-results-button" onclick="clearResults()"><i class="fas fa-times-circle faIcon"></i>Clear Results</button>
+            </div>
+
         </form>
+
+        <div id="resultsInfo" style="display: none;">
+            <div style="margin-top: 20px;">
+                <label for="sortBy">Sort results by:</label>
+                <select id="sortBy" class="styled-select" onchange="findWords()">
+                    <option value="none">Default</option>
+                    <option value="score">Score (High → Low)</option>
+                    <option value="length">Length (Long → Short)</option>
+                    <option value="alpha">Alphabetical (A → Z)</option>
+                </select>
+            </div>
+            <hr class="results-divider">
+            <div id="resultsHeader"></div>
+        </div>
         <div id="results"></div>
+
+
     </div>
 
     <footer class="footer">
