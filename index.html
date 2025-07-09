@@ -47,83 +47,88 @@
             </div>
         </div>
 
-        <form class="filters" onsubmit="event.preventDefault(); findWords();">
-            <div>
-                <label>Find words for Scrabble:</label>
-                <input id="letters" type="text" class="scrabble-input" maxlength="12" placeholder="Enter letters" />
-            </div>
-
-            <div>
-                <label>Filter by length:</label>
-                <label for="wordLength" id="lengthExplanation" class="filter-info">
-                    <span id="lengthDynamic">5</span>
-                </label>
-                <input type="range" id="wordLength" min="2" max="12" value="5" oninput="updateLengthDisplay()" />
-                <div class="toggle-group">
-                    <button type="button" class="toggle-btn active" data-mode="greater" onclick="setMode(this)">≥</button>
-                    <button type="button" class="toggle-btn" data-mode="less" onclick="setMode(this)">≤</button>
-                    <button type="button" class="toggle-btn" data-mode="equal" onclick="setMode(this)">==</button>
+        <div id="formWrapper">
+            <form class="filters" onsubmit="event.preventDefault(); findWords();">
+                <div class="form-group">
+                    <label class="section-label">Find words for Scrabble:</label>
+                    <input id="letters" type="text" class="scrabble-input" maxlength="12" placeholder="Enter letters" />
                 </div>
-            </div>
 
-            <input type="hidden" id="lengthMode" value="greater" />
-            <div>
-                <label>Wildcards:</label>
-                <div class="toggle-group" id="wildcardToggle">
-                    <button type="button" class="toggle-btn active" onclick="setWildcard(this, 0)">0 Wildcards</button>
-                    <button type="button" class="toggle-btn" onclick="setWildcard(this, 1)">1 Wildcard</button>
-                    <button type="button" class="toggle-btn" onclick="setWildcard(this, 2)">2 Wildcards</button>
+                <div class="form-group">
+                    <label class="section-label">Filter by length:</label>
+                    <label for="wordLength" id="lengthExplanation" class="filter-info">
+                        <span id="lengthDynamic">5</span>
+                    </label>
+                    <input type="range" id="wordLength" min="2" max="12" value="5" oninput="updateLengthDisplay()" />
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn active" data-mode="greater" onclick="setMode(this)">≥</button>
+                        <button type="button" class="toggle-btn" data-mode="less" onclick="setMode(this)">≤</button>
+                        <button type="button" class="toggle-btn" data-mode="equal" onclick="setMode(this)">==</button>
+                    </div>
                 </div>
-                <input type="hidden" id="wildcardCount" value="0">
-            </div>
 
-            <div>
-                <label>
-                    Require letter at position:
-                    <span title="E.g. H at position 2 will match words like 'THE' or 'SHE'"><span class="info-icon" tabindex="0" aria-describedby="tooltip-desc">
-                            <i class="fas fa-info-circle"></i> </span></span>
-                </label>
-                <div>
-                    <div class="position-filter">
-                        <div class="position-inputs">
-                            <input type="text" id="requiredLetter" placeholder="A–Z" maxlength="1" title="Enter a single letter A–Z" />
-                            <input type="text" id="requiredPosition" placeholder="1–12" maxlength="2" title="Enter a number between 1 and 12" />
+                <input type="hidden" id="lengthMode" value="greater" />
+
+                <div class="form-group">
+                    <label class="section-label">Wildcards:</label>
+                    <div class="toggle-group" id="wildcardToggle">
+                        <button type="button" class="toggle-btn active" onclick="setWildcard(this, 0)">0 Wildcards</button>
+                        <button type="button" class="toggle-btn" onclick="setWildcard(this, 1)">1 Wildcard</button>
+                        <button type="button" class="toggle-btn" onclick="setWildcard(this, 2)">2 Wildcards</button>
+                    </div>
+                    <input type="hidden" id="wildcardCount" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="section-label">
+                        Require letter at position:
+                        <span title="E.g. H at position 2 will match words like 'THE' or 'SHE'"><span class="info-icon" tabindex="0" aria-describedby="tooltip-desc">
+                                <i class="fas fa-info-circle"></i> </span></span>
+                    </label>
+                    <div>
+                        <div class="position-filter">
+                            <div class="position-inputs">
+                                <input type="text" id="requiredLetter" placeholder="A–Z" maxlength="1" title="Enter a single letter A–Z" />
+                                <input type="text" id="requiredPosition" placeholder="1–12" maxlength="2" title="Enter a number between 1 and 12" />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div>
-                <label>
-                    <input type="checkbox" id="showAll" onchange="updateSummaryLabel()" />
-                    Show all suggestions
-                </label>
-            </div>
-            <p id="summaryLabel" class="filter-info"></p>
-            <div>
-                <button onclick="findWords()">Find Words!</button>
-            </div>
-            <div>
-                <button type="button" class="clear-results-button" onclick="clearResults()"><i class="fas fa-times-circle faIcon"></i>Clear Results</button>
+
+                <div>
+                    <label>
+                        <input type="checkbox" id="showAll" onchange="updateSummaryLabel()" />
+                        Show all suggestions
+                    </label>
+                </div>
+
+                <p id="summaryLabel" class="filter-info"></p>
+
+                <div class="form-group">
+                    <button onclick="findWords()" class="primary-button">Find Words!</button>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="reset-button" onclick="resetAllFilters()">
+                        <i class="fas fa-rotate-left faIcon"></i> Start Over
+                    </button>
+                </div>
+            </form>
+
+            <div id="resultsBar" class="results-bar" style="display: none;">
+                <div id="resultsHeader" class="results-count">0 words found</div>
+                <div class="sort-dropdown">
+                    <label for="sortBy">Sort by</label>
+                    <select id="sortBy" class="styled-select" onchange="findWords()">
+                        <option value="none">Default</option>
+                        <option value="score">Score (High to Low)</option>
+                        <option value="length">Length (Long to Short)</option>
+                        <option value="alpha">Alphabetical (A to Z)</option>
+                    </select>
+                </div>
             </div>
 
-        </form>
-
-        <div id="resultsInfo" style="display: none;">
-            <div style="margin-top: 20px;">
-                <label for="sortBy">Sort results by:</label>
-                <select id="sortBy" class="styled-select" onchange="findWords()">
-                    <option value="none">Default</option>
-                    <option value="score">Score (High → Low)</option>
-                    <option value="length">Length (Long → Short)</option>
-                    <option value="alpha">Alphabetical (A → Z)</option>
-                </select>
-            </div>
-            <hr class="results-divider">
-            <div id="resultsHeader"></div>
+            <div id="results"></div>
         </div>
-        <div id="results"></div>
-
-
     </div>
 
     <footer class="footer">

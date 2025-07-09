@@ -106,7 +106,7 @@ function findWords() {
 
   const resultsContainer = document.getElementById("results");
   const resultsHeader = document.getElementById("resultsHeader");
-  const resultsInfo = document.getElementById("resultsInfo");
+  const resultsBar = document.getElementById("resultsBar");
   resultsContainer.innerHTML = '';
 
   const matches = [];
@@ -152,27 +152,30 @@ function findWords() {
         score: getWordScore(word)
       });
     }
-    // After collecting matches
-    const sortBy = document.getElementById("sortBy").value;
-
-    if (sortBy === "score") {
-      matches.sort((a, b) => b.score - a.score);
-    } else if (sortBy === "length") {
-      matches.sort((a, b) => b.word.length - a.word.length);
-    } else if (sortBy === "alpha") {
-      matches.sort((a, b) => a.word.localeCompare(b.word));
-    }
-
   }
 
+  // After collecting matches
+  const sortBy = document.getElementById("sortBy").value;
+
+  if (sortBy === "score") {
+    matches.sort((a, b) => b.score - a.score);
+  } else if (sortBy === "length") {
+    matches.sort((a, b) => b.word.length - a.word.length);
+  } else if (sortBy === "alpha") {
+    matches.sort((a, b) => a.word.localeCompare(b.word));
+  }
+
+
   if (matches.length === 0) {
-    resultsInfo.style.display = "none";
+    resultsBar.style.display = "none";
     resultsContainer.textContent = "No matching words found. 😢";
     return;
   }
 
   // Show result header and update it
-  resultsInfo.style.display = "block";
+  if (resultsBar) {
+    resultsBar.style.display = "flex";
+  }
   resultsHeader.textContent = `Found ${matches.length} valid word${matches.length !== 1 ? 's' : ''}`;
 
   const maxLength = Math.max(...matches.map(m => m.word.length));
@@ -225,10 +228,50 @@ document.getElementById("requiredPosition").addEventListener("input", (e) => {
   e.target.value = cleaned;
 });
 
+
+// reset - start over button
+function resetAllFilters() {
+  const resultsArea = document.getElementById("results");
+
+  // Trigger wipe animation on results
+  resultsArea.classList.add("wipe-out");
+
+  // Delay reset until animation completes
+  setTimeout(() => {
+    // Reset input state
+    document.getElementById("letters").value = "";
+    document.getElementById("wordLength").value = 5;
+    document.getElementById("lengthMode").value = "greater";
+    document.getElementById("requiredLetter").value = "";
+    document.getElementById("requiredPosition").value = "";
+    document.getElementById("wildcardCount").value = 0;
+    document.getElementById("showAll").checked = false;
+    document.getElementById("sortBy").value = "none";
+
+    // Reset toggle states
+    document.querySelectorAll(".toggle-group").forEach(group => {
+      const buttons = group.querySelectorAll(".toggle-btn");
+      buttons.forEach(btn => btn.classList.remove("active"));
+      buttons[0]?.classList.add("active");
+    });
+
+    // Clear results and update summary
+    clearResults();
+    updateSummaryLabel();
+
+    // Remove animation class and restore visibility
+    resultsArea.classList.remove("wipe-out");
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 400); // Matches CSS animation duration
+}
+
+
 function clearResults() {
   document.getElementById("results").innerHTML = '';
   document.getElementById("resultsHeader").textContent = '';
-  document.getElementById("resultsInfo").style.display = "none";
+  document.getElementById("resultsBar").style.display = "none";
 }
 
 
