@@ -465,6 +465,68 @@ button:hover {
     color: var(--text-secondary);
 }
 
+#resultsAnchor {
+    height: 1px;
+    margin: 0;
+    padding: 0;
+}
+
+.results-loader {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin: 20px 0;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.tile-loader {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 24px 0;
+}
+
+.flip-tile {
+    width: 40px;
+    height: 40px;
+    background-color: var(--tile-bg, #f1e3c6);
+    color: var(--tile-text, #333);
+    font-weight: bold;
+    font-family: 'Scramble', serif;
+    font-size: 2rem;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 6px;
+    transform-style: preserve-3d;
+    animation: tileFlip 1.2s infinite;
+    /* Slow each tile flip */
+    animation-delay: calc(var(--i) * 0.26s);
+    /* More space between flips. Was 0.15s */
+    backface-visibility: hidden;
+    perspective: 600px;
+}
+
+@keyframes tileFlip {
+
+    0%,
+    100% {
+        transform: rotateX(0);
+    }
+
+    50% {
+        transform: rotateX(180deg);
+    }
+}
 
 #results {
     margin-top: 25px;

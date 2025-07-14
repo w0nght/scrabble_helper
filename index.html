@@ -102,6 +102,8 @@
                     </label>
                 </div>
 
+                <div id="resultsAnchor" style="position: relative; top: -100px;"></div>
+
                 <p id="summaryLabel" class="filter-info"></p>
 
                 <div class="form-group">
@@ -113,6 +115,20 @@
                     </button>
                 </div>
             </form>
+
+
+
+            <div id="resultsTextLoader" class="results-loader" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i> Finding words…
+            </div>
+
+            <div id="resultsTileLoader" class="tile-loader" style="display: none;">
+                <div class="flip-tile">F</div>
+                <div class="flip-tile">L</div>
+                <div class="flip-tile">I</div>
+                <div class="flip-tile">P</div>
+                <div class="flip-tile">!</div>
+            </div>
 
             <div id="resultsBar" class="results-bar" style="display: none;">
                 <div id="resultsHeader" class="results-count">0 words found</div>

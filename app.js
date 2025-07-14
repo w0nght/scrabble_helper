@@ -93,6 +93,7 @@ function updateSummaryLabel() {
 
 
 function findWords() {
+  // 1. Get inputs and elements
   const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
   const length = parseInt(document.getElementById("wordLength").value);
   const mode = document.getElementById("lengthMode").value;
@@ -104,100 +105,131 @@ function findWords() {
   const allLetters = input + '?'.repeat(wildcardCount);
   const availableLetters = allLetters.split('');
 
+  // 2. Get DOM elements
   const resultsContainer = document.getElementById("results");
   const resultsHeader = document.getElementById("resultsHeader");
   const resultsBar = document.getElementById("resultsBar");
+  const resultsTextLoader = document.getElementById("resultsTextLoader");
+  const resultsTileLoader = document.getElementById("resultsTileLoader");
+  const MIN_FLIP_DURATION = 1400; // total time to let tiles animate. Adjust delay duration to simulate processing time
+
+  // 3. Prepare UI
   resultsContainer.innerHTML = '';
+  resultsHeader.textContent = '';
+  resultsBar.style.display = "none";
+  resultsTextLoader.style.display = "block"; // show loading spinner
+  resultsTileLoader.style.display = "flex"; // show loading flipping tile
 
-  const matches = [];
+  // Scroll BEFORE results are calculated
+  document.getElementById("resultsAnchor").scrollIntoView({ behavior: "smooth" });
 
-  for (const word of words) {
-    if (
-      !showAll &&
-      ((mode === "greater" && word.length < length) ||
-        (mode === "less" && word.length > length) ||
-        (mode === "equal" && word.length !== length))
-    ) continue;
+  // 4. Delay to simulate "thinking time"
+  setTimeout(() => {
+    const matches = [];
 
-    if (!matchRequiredPosition(word, requiredLetter, requiredPosition)) continue;
+    // 5. Match words from dictionary
+    for (const word of words) {
+      // Filter by word length if "Show All" is not checked
+      if (!showAll &&
+        ((mode === "greater" && word.length < length) ||
+          (mode === "less" && word.length > length) ||
+          (mode === "equal" && word.length !== length))) {
+        continue;
+      }
 
-    const tempLetters = [...availableLetters];
-    const wordLetters = word.toUpperCase().split('');
-    const wildcardIndices = [];
+      // Check required letter at a position (if specified)
+      if (!matchRequiredPosition(word, requiredLetter, requiredPosition)) continue;
 
-    let valid = true;
+      // Handle letter matching with wildcards
+      const tempLetters = [...availableLetters];
+      const wordLetters = word.toUpperCase().split('');
+      const wildcardIndices = [];
+      let valid = true;
 
-    for (let i = 0; i < wordLetters.length; i++) {
-      const l = wordLetters[i];
-      const idx = tempLetters.indexOf(l);
+      for (let i = 0; i < wordLetters.length; i++) {
+        const letter = wordLetters[i];
+        const idx = tempLetters.indexOf(letter);
 
-      if (idx !== -1) {
-        tempLetters.splice(idx, 1);
-      } else {
-        const wildIdx = tempLetters.indexOf('?');
-        if (wildIdx !== -1) {
-          wildcardIndices.push(i);
-          tempLetters.splice(wildIdx, 1);
+        if (idx !== -1) {
+          tempLetters.splice(idx, 1); // Use the letter
         } else {
-          valid = false;
-          break;
+          const wildIdx = tempLetters.indexOf('?');
+          if (wildIdx !== -1) {
+            wildcardIndices.push(i); // Track wildcard positions
+            tempLetters.splice(wildIdx, 1);
+          } else {
+            valid = false; // Letter not available at all
+            break;
+          }
         }
+      }
+
+      // Add valid word to matches
+      if (valid) {
+        matches.push({
+          word,
+          wildcards: wildcardIndices,
+          score: getWordScore(word)
+        });
       }
     }
 
-    if (valid) {
-      matches.push({
-        word,
-        wildcards: wildcardIndices,
-        score: getWordScore(word)
-      });
+    // 6. Sort matches if a sort option is selected
+    const sortBy = document.getElementById("sortBy").value;
+    if (sortBy === "score") {
+      matches.sort((a, b) => b.score - a.score);
+    } else if (sortBy === "length") {
+      matches.sort((a, b) => b.word.length - a.word.length);
+    } else if (sortBy === "alpha") {
+      matches.sort((a, b) => a.word.localeCompare(b.word));
     }
-  }
 
-  // After collecting matches
-  const sortBy = document.getElementById("sortBy").value;
+    // 7. Hide loader only after full flip is done
+    resultsTextLoader.style.display = "none";
+    resultsTileLoader.style.display = "none";
 
-  if (sortBy === "score") {
-    matches.sort((a, b) => b.score - a.score);
-  } else if (sortBy === "length") {
-    matches.sort((a, b) => b.word.length - a.word.length);
-  } else if (sortBy === "alpha") {
-    matches.sort((a, b) => a.word.localeCompare(b.word));
-  }
+    // 8. Handle no matches
+    if (matches.length === 0) {
+      resultsBar.style.display = "none";
+      resultsContainer.textContent = "No matching words found. 😢";
+      return;
+    }
 
-
-  if (matches.length === 0) {
-    resultsBar.style.display = "none";
-    resultsContainer.textContent = "No matching words found. 😢";
-    return;
-  }
-
-  // Show result header and update it
-  if (resultsBar) {
+    // 9. Update results header
     resultsBar.style.display = "flex";
-  }
-  resultsHeader.textContent = `Found ${matches.length} valid word${matches.length !== 1 ? 's' : ''}`;
+    resultsHeader.textContent = `Found ${matches.length} valid word${matches.length !== 1 ? 's' : ''}`;
 
-  const maxLength = Math.max(...matches.map(m => m.word.length));
+    // 10. Display results with fade-in animation
+    const maxLength = Math.max(...matches.map(m => m.word.length));
 
-  for (const match of matches) {
+    matches.forEach((match, index) => {
+      const span = document.createElement("span");
 
-    const span = document.createElement("span");
+      // Highlight wildcards
+      span.innerHTML = match.word
+        .split('')
+        .map((char, i) => match.wildcards.includes(i)
+          ? `<span class="wildcard">${char}</span>`
+          : char
+        )
+        .join('') + ` <small>${match.score} pts</small>`;
 
-    span.innerHTML = match.word
-      .split('')
-      .map((char, i) => match.wildcards.includes(i)
-        ? `<span class="wildcard">${char}</span>`
-        : char
-      )
-      .join('') + ` <small>${match.score} pts</small>`;
+      // Mark high score words if desired
+      if (!showAll && match.word.length === maxLength) {
+        span.classList.add("high-score");
+      }
 
-    if (!showAll && match.word.length === maxLength) {
-      span.classList.add("high-score");
-    }
+      // Animate each result
+      span.style.animationDelay = `${index * 40}ms`;
+      resultsContainer.appendChild(span);
+    });
 
-    resultsContainer.appendChild(span);
-  }
+    // Scroll to results smoothly after all results are appended
+    // resultsContainer.scrollIntoView({ behavior: "smooth" });
+
+
+
+  }, MIN_FLIP_DURATION); // wait this long before rendering anything
 }
 
 
@@ -291,7 +323,13 @@ window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
   themeToggle.textContent = saved === 'dark' ? '🌙' : '🌞';
+
   updateSummaryLabel();
+
+  // To stagger each tile’s flip nicely, assign animation delays on page load:
+  document.querySelectorAll(".flip-tile").forEach((tile, i) => {
+    tile.style.setProperty("--i", i);
+  });
 });
 
 // Open/Close Menu logic
