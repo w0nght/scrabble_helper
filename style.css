@@ -304,6 +304,86 @@ input[type="range"],
     font-size: 1rem;
 }
 
+.range-slider {
+    position: relative;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.range-slider input[type="range"] {
+    position: absolute;
+    width: 100%;
+    pointer-events: none;
+    /* Prevent overlapping inputs from blocking each other */
+    appearance: none;
+    background: none;
+    height: 36px;
+}
+
+.range-slider input[type="range"]::-webkit-slider-thumb {
+    pointer-events: all;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background-color: var(--accent-color, #555);
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.range-slider input[type="range"]::-moz-range-thumb {
+    pointer-events: all;
+    width: 18px;
+    height: 18px;
+    background-color: var(--accent-color, #555);
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* Track bar */
+.range-slider::before {
+    content: '';
+    position: absolute;
+    height: 6px;
+    width: 100%;
+    background: #ccc;
+    border-radius: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 0;
+}
+
+/* Highlighted range */
+.range-slider::after {
+    content: '';
+    position: absolute;
+    height: 6px;
+    background: var(--accent-color, #444);
+    border-radius: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    left: var(--min-percent, 0%);
+    right: calc(100% - var(--max-percent, 100%));
+
+    /* Add a slight overflow to the fill if needed */
+    margin-left: -1px;
+    margin-right: -1px;
+}
+
+.range-values {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin-top: 6px;
+    color: var(--text-secondary);
+}
+
 button {
     padding: 12px;
     background-color: var(--button-bg);
@@ -499,11 +579,12 @@ button:hover {
 .flip-tile {
     width: 40px;
     height: 40px;
-    background-color: var(--tile-bg, #f1e3c6);
-    color: var(--tile-text, #333);
+    /* background-color: var(--tile-bg, #f1e3c6);
+    color: var(--tile-text, #333); */
     font-weight: bold;
     font-family: 'Scramble', serif;
-    font-size: 2rem;
+    font-size: 3em;
+    padding: 3px;
     text-align: center;
     line-height: 40px;
     border-radius: 6px;

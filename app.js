@@ -26,17 +26,55 @@ function matchRequiredPosition(word, letter, pos) {
   return word[index] === letter;
 }
 
-// word length group button listener
-function setMode(button) {
-  const group = button.parentElement;
-  const buttons = group.querySelectorAll(".toggle-btn");
-  buttons.forEach(btn => btn.classList.remove("active"));
-  button.classList.add("active");
-  document.getElementById("lengthMode").value = button.getAttribute("data-mode");
-  console.log("lengthMode:", button.dataset.mode);
-  updateLengthDisplay();
-  updateSummaryLabel();
+// Update labels and prevent overlap - Dual-range slider 
+function updateLengthLabels() {
+  const minSlider = document.getElementById("minLength");
+  const maxSlider = document.getElementById("maxLength");
+  let minVal = parseInt(minSlider.value);
+  let maxVal = parseInt(maxSlider.value);
+
+  // Prevent overlap
+  if (minVal >= maxVal) {
+    if (event?.target === minSlider) {
+      minVal = maxVal - 1;
+      minSlider.value = minVal;
+    } else {
+      maxVal = minVal + 1;
+      maxSlider.value = maxVal;
+    }
+  }
+
+  // Update labels
+  document.getElementById("minLengthLabel").textContent = minVal;
+  document.getElementById("maxLengthLabel").textContent = maxVal;
+
+  // Calculate percentage positions for highlight bar
+  const minPercent = ((minVal - 2) / (15 - 2)) * 100;
+  const maxPercent = ((maxVal - 2) / (15 - 2)) * 100;
+
+  const slider = document.querySelector(".range-slider");
+  slider.style.setProperty('--min-percent', `${minPercent}%`);
+  slider.style.setProperty('--max-percent', `${maxPercent}%`);
+
+
+  updateSummaryLabel?.();
 }
+
+// Dynamically Set Default Range from Input when users type in the #letters input
+function setDefaultRangeFromInput() {
+  const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
+  const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
+  const totalLetters = input.length + wildcardCount;
+
+  const min = 2;
+  const max = Math.min(15, totalLetters);
+
+  document.getElementById("minLength").value = min;
+  document.getElementById("maxLength").value = Math.max(min + 1, max);
+
+  updateLengthLabels();
+}
+
 
 // Wildcard group button listener
 function setWildcard(button, count) {
@@ -46,47 +84,28 @@ function setWildcard(button, count) {
   button.classList.add("active");
   document.getElementById("wildcardCount").value = count;
   console.log("wildcardCount:", count);
+
+  // ✅ Update the range slider based on new wildcard count
+  setDefaultRangeFromInput();
   updateSummaryLabel();
-}
-
-function updateLengthDisplay() {
-  updateLengthExplanation();
-  updateSummaryLabel();
-}
-
-function updateLengthExplanation() {
-  const length = document.getElementById("wordLength").value;
-  const mode = document.getElementById("lengthMode").value;
-
-  const modeText = {
-    greater: "greater than or equal to",
-    less: "less than or equal to",
-    equal: "exactly"
-  };
-
-  const label = document.getElementById("lengthDynamic");
-  label.textContent = ` ${length}`;
 }
 
 function updateSummaryLabel() {
-  const length = parseInt(document.getElementById("wordLength").value);
-  const mode = document.getElementById("lengthMode").value;
+  const min = parseInt(document.getElementById("minLength").value);
+  const max = parseInt(document.getElementById("maxLength").value);
   const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
   const showAll = document.getElementById("showAll").checked;
-
-  const modeSymbol = {
-    greater: "≥",
-    less: "≤",
-    equal: "="
-  }[mode];
 
   let text = "";
 
   if (showAll) {
     text = `Showing all suggestions (ignoring length filter), using ${wildcardCount} wildcard${wildcardCount !== 1 ? "s" : ""}`;
   } else {
-    text = `Searching for words ${modeSymbol} ${length} letters with ${wildcardCount} wildcard${wildcardCount !== 1 ? "s" : ""}`;
+    text = `Searching for words between ${min} and ${max} letters with ${wildcardCount} wildcard${wildcardCount !== 1 ? "s" : ""}`;
   }
+  console.log("summaryLabel:", text);
+  console.log("min:", min);
+  console.log("max:", max);
 
   document.getElementById("summaryLabel").textContent = text;
 }
@@ -95,12 +114,13 @@ function updateSummaryLabel() {
 function findWords() {
   // 1. Get inputs and elements
   const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
-  const length = parseInt(document.getElementById("wordLength").value);
-  const mode = document.getElementById("lengthMode").value;
   const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
   const requiredLetter = document.getElementById("requiredLetter").value.toUpperCase();
   const requiredPosition = parseInt(document.getElementById("requiredPosition").value);
   const showAll = document.getElementById("showAll").checked;
+
+  const minLength = parseInt(document.getElementById("minLength").value);
+  const maxLength = parseInt(document.getElementById("maxLength").value);
 
   const allLetters = input + '?'.repeat(wildcardCount);
   const availableLetters = allLetters.split('');
@@ -130,10 +150,7 @@ function findWords() {
     // 5. Match words from dictionary
     for (const word of words) {
       // Filter by word length if "Show All" is not checked
-      if (!showAll &&
-        ((mode === "greater" && word.length < length) ||
-          (mode === "less" && word.length > length) ||
-          (mode === "equal" && word.length !== length))) {
+      if (!showAll && (word.length < minLength || word.length > maxLength)) {
         continue;
       }
 
@@ -200,7 +217,7 @@ function findWords() {
     resultsHeader.textContent = `Found ${matches.length} valid word${matches.length !== 1 ? 's' : ''}`;
 
     // 10. Display results with fade-in animation
-    const maxLength = Math.max(...matches.map(m => m.word.length));
+    const longestWordLength = Math.max(...matches.map(m => m.word.length));
 
     matches.forEach((match, index) => {
       const span = document.createElement("span");
@@ -215,7 +232,7 @@ function findWords() {
         .join('') + ` <small>${match.score} pts</small>`;
 
       // Mark high score words if desired
-      if (!showAll && match.word.length === maxLength) {
+      if (!showAll && match.word.length === longestWordLength) {
         span.classList.add("high-score");
       }
 
@@ -223,21 +240,16 @@ function findWords() {
       span.style.animationDelay = `${index * 40}ms`;
       resultsContainer.appendChild(span);
     });
-
-    // Scroll to results smoothly after all results are appended
-    // resultsContainer.scrollIntoView({ behavior: "smooth" });
-
-
-
   }, MIN_FLIP_DURATION); // wait this long before rendering anything
 }
-
-
 
 document.getElementById("letters").addEventListener("input", (e) => {
   // Allow only A-Z letters, uppercase automatically
   const cleaned = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
   e.target.value = cleaned;
+
+  // Update the min/max range based on total letters + wildcards
+  setDefaultRangeFromInput();
 });
 
 // Required Letter: only A–Z
@@ -260,7 +272,6 @@ document.getElementById("requiredPosition").addEventListener("input", (e) => {
   e.target.value = cleaned;
 });
 
-
 // reset - start over button
 function resetAllFilters() {
   const resultsArea = document.getElementById("results");
@@ -272,8 +283,10 @@ function resetAllFilters() {
   setTimeout(() => {
     // Reset input state
     document.getElementById("letters").value = "";
-    document.getElementById("wordLength").value = 5;
-    document.getElementById("lengthMode").value = "greater";
+    document.getElementById("minLength").value = "2";
+    document.getElementById("maxLength").value = "5";
+    // document.getElementById("wordLength").value = 5;
+    // document.getElementById("lengthMode").value = "greater";
     document.getElementById("requiredLetter").value = "";
     document.getElementById("requiredPosition").value = "";
     document.getElementById("wildcardCount").value = 0;
