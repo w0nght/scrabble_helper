@@ -26,55 +26,58 @@ function matchRequiredPosition(word, letter, pos) {
   return word[index] === letter;
 }
 
-// Update labels and prevent overlap - Dual-range slider 
-function updateLengthLabels() {
-  const minSlider = document.getElementById("minLength");
-  const maxSlider = document.getElementById("maxLength");
-  let minVal = parseInt(minSlider.value);
-  let maxVal = parseInt(maxSlider.value);
+let lengthSlider = document.getElementById('lengthRange');
 
-  // Prevent overlap
-  if (minVal >= maxVal) {
-    if (event?.target === minSlider) {
-      minVal = maxVal - 1;
-      minSlider.value = minVal;
-    } else {
-      maxVal = minVal + 1;
-      maxSlider.value = maxVal;
-    }
-  }
+noUiSlider.create(lengthSlider, {
+  start: [2, 8],         // Default values
+  connect: true,         // Show range highlight
+  step: 1,
+  range: {
+    min: 2,
+    max: 15
+  },
+  // Move handle on tap, bars are draggable
+  behaviour: 'tap-drag',
+  tooltips: true,
+  format: {
+    to: value => Math.round(value),
+    from: value => Number(value)
+  },
 
-  // Update labels
-  document.getElementById("minLengthLabel").textContent = minVal;
-  document.getElementById("maxLengthLabel").textContent = maxVal;
+});
 
-  // Calculate percentage positions for highlight bar
-  const minPercent = ((minVal - 2) / (15 - 2)) * 100;
-  const maxPercent = ((maxVal - 2) / (15 - 2)) * 100;
+// Update visible values
+const minValueLabel = document.getElementById("minLengthValue");
+const maxValueLabel = document.getElementById("maxLengthValue");
 
-  const slider = document.querySelector(".range-slider");
-  slider.style.setProperty('--min-percent', `${minPercent}%`);
-  slider.style.setProperty('--max-percent', `${maxPercent}%`);
+lengthSlider.noUiSlider.on('update', (values, handle) => {
+  minValueLabel.textContent = values[0];
+  maxValueLabel.textContent = values[1];
 
+  // Also update the summary
+  updateSummaryLabel();
+});
 
-  updateSummaryLabel?.();
-}
 
 // Dynamically Set Default Range from Input when users type in the #letters input
 function setDefaultRangeFromInput() {
-  const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
-  const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
-  const totalLetters = input.length + wildcardCount;
+  const letters = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
+  const wildcards = parseInt(document.getElementById("wildcardCount").value || "0");
+  const total = letters.length + wildcards;
 
-  const min = 2;
-  const max = Math.min(15, totalLetters);
+  // Calculate new max based on user input
+  const newMax = Math.min(15, Math.max(3, total));
 
-  document.getElementById("minLength").value = min;
-  document.getElementById("maxLength").value = Math.max(min + 1, max);
+  // Get current slider values
+  const [currentMin, currentMax] = lengthSlider.noUiSlider.get().map(Number);
 
-  updateLengthLabels();
+  // Avoid overlap: ensure min < max
+  const newMin = Math.min(currentMin, newMax - 1);
+  const adjustedMax = Math.max(newMin + 1, newMax);
+
+  // Apply the new range
+  lengthSlider.noUiSlider.set([newMin, adjustedMax]);
 }
-
 
 // Wildcard group button listener
 function setWildcard(button, count) {
@@ -82,17 +85,32 @@ function setWildcard(button, count) {
   const buttons = group.querySelectorAll(".toggle-btn");
   buttons.forEach(btn => btn.classList.remove("active"));
   button.classList.add("active");
-  document.getElementById("wildcardCount").value = count;
-  console.log("wildcardCount:", count);
 
-  // ✅ Update the range slider based on new wildcard count
-  setDefaultRangeFromInput();
+  document.getElementById("wildcardCount").value = count;
   updateSummaryLabel();
+
+  // Update range slider when wildcard changes
+  setDefaultRangeFromInput();
+}
+
+function updateSliderFromInput() {
+  const letters = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
+  const wildcards = parseInt(document.getElementById("wildcardCount").value || "0");
+  const total = letters.length + wildcards;
+
+  const newMax = Math.min(15, Math.max(3, total));
+  const current = lengthSlider.noUiSlider.get().map(Number);
+
+  lengthSlider.noUiSlider.set([
+    Math.min(current[0], newMax - 1),
+    newMax
+  ]);
+
+  updateSummaryLabel?.();
 }
 
 function updateSummaryLabel() {
-  const min = parseInt(document.getElementById("minLength").value);
-  const max = parseInt(document.getElementById("maxLength").value);
+  const [min, max] = lengthSlider.noUiSlider.get().map(Number);
   const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
   const showAll = document.getElementById("showAll").checked;
 
@@ -119,8 +137,7 @@ function findWords() {
   const requiredPosition = parseInt(document.getElementById("requiredPosition").value);
   const showAll = document.getElementById("showAll").checked;
 
-  const minLength = parseInt(document.getElementById("minLength").value);
-  const maxLength = parseInt(document.getElementById("maxLength").value);
+  const [minLength, maxLength] = lengthSlider.noUiSlider.get().map(v => parseInt(v));
 
   const allLetters = input + '?'.repeat(wildcardCount);
   const availableLetters = allLetters.split('');
@@ -283,15 +300,14 @@ function resetAllFilters() {
   setTimeout(() => {
     // Reset input state
     document.getElementById("letters").value = "";
-    document.getElementById("minLength").value = "2";
-    document.getElementById("maxLength").value = "5";
-    // document.getElementById("wordLength").value = 5;
-    // document.getElementById("lengthMode").value = "greater";
     document.getElementById("requiredLetter").value = "";
     document.getElementById("requiredPosition").value = "";
     document.getElementById("wildcardCount").value = 0;
     document.getElementById("showAll").checked = false;
     document.getElementById("sortBy").value = "none";
+
+    // ✅ Reset the range slider to default values (e.g., 3 to 8)
+    lengthSlider.noUiSlider.set([3, 8]);
 
     // Reset toggle states
     document.querySelectorAll(".toggle-group").forEach(group => {
@@ -364,6 +380,33 @@ sideMenu.querySelectorAll("a").forEach(link => {
     sideMenu.classList.remove("open");
   });
 });
+
+// === Funny rotating intro messages ===
+const introMessages = [
+  `Think of this as your <strong>totally harmless</strong> Scrabble sidekick — not a cheat, just a really enthusiastic friend who’s great with words. Pop in your letters, maybe a wildcard or two, and let's make some magic happen.`,
+  `Not a cheat... just a <em>very helpful</em> coincidence. 🧐 Type in your tiles and let's see what the dictionary gods say.`,
+  `We're not saying this is cheating... but your cousin Brian might raise an eyebrow. 😏 Let’s find the best words, shall we?`,
+  `This tool isn’t cheating — it’s just <em>optimizing your genius</em>. Input your letters, and we’ll do the heavy lifting.`,
+  `Your friendly neighborhood word whisperer. Drop your tiles in — we’ll take it from here. No judgment. 😉`,
+  `Shhh… we won’t say anything. Let’s win this game with charm and letters.`,
+  `Words are hard. That’s why you brought backup. Welcome aboard.`,
+  `This isn't cheating — it's <em>enhanced vocabulary exploration</em>. Totally educational.`,
+  `Type your letters in, and let this tool do what it does best: make you look brilliant.`,
+  `We won’t tell the Scrabble police if you don’t. 🤫 Type in those tiles!`,
+  `Everyone has that one smart friend. This one just lives in your browser.`,
+  `Cheating? Nah. It’s called <em>strategic assistance</em> — and it’s fabulous.`,
+  `Just you, your letters, and a suspiciously smart web app. Let’s find that bingo, shall we?`,
+  `Just between us… this is how legends are made. Quietly. With great words. 😌`,
+  `You didn't hear this from me… but seven-letter words just magically happen here.`,
+  `Let’s call it… aggressive word support. Totally fair. Probably.`,
+  `Technically, you’re still playing Scrabble. You’re just playing it <em>better</em>.`,
+  `What happens in this tab… stays in this tab. 🕶️`,
+  `It’s not about cheating. It’s about </em>clever resource management</em>.`
+];
+
+// Pick one at random on load
+const randomIndex = Math.floor(Math.random() * introMessages.length);
+document.getElementById("introText").innerHTML = introMessages[randomIndex];
 
 // Version Info
 fetch('https://api.github.com/repos/w0nght/scrabble_helper/tags')

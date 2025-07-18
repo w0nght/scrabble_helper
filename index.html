@@ -5,10 +5,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scrabble Helper</title>
+    <meta name="description" content="Use Scrabble Helper to quickly find high-scoring words. Filter by letter positions, wildcard tiles, word length, and more. Fast and easy to use!">
+    <meta name="keywords" content="scrabble, scrabble helper, word finder, word generator, crossword solver, wildcard words, scrabble cheat, word unscrambler">
+    <meta name="author" content="Joey Wong">
+    <meta name="language" content="en">
     <link href="https://fonts.cdnfonts.com/css/byte-sized-computing" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet">
+    <!-- noUiSlider CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css" />
+
+    <!-- noUiSlider JS -->
+    <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
+
 </head>
 
 <body>
@@ -47,6 +57,10 @@
             </div>
         </div>
 
+        <div>
+            <p id="introText"></p>
+        </div>
+
         <div id="formWrapper">
             <form class="filters" onsubmit="event.preventDefault(); findWords();">
                 <div class="form-group">
@@ -64,22 +78,15 @@
                     <input type="hidden" id="wildcardCount" value="0">
                 </div>
 
-                <div class="form-group" id="lengthRangeWrapper">
-                    <label class="section-label">Word Length Range:</label>
-
-                    <div class="range-slider" style="--min-percent: 7.7%; --max-percent: 30.7%;">
-                        <input type="range" id="minLength" min="2" max="15" value="3" step="1" oninput="updateLengthLabels()" />
-                        <input type="range" id="maxLength" min="2" max="15" value="5" step="1" oninput="updateLengthLabels()" />
-                    </div>
-
-                    <div class="range-values">
-                        <span>Min: <span id="minLengthLabel">3</span></span>
-                        <span>Max: <span id="maxLengthLabel">8</span></span>
+                <div class="form-group">
+                    <label for="lengthRange" class="section-label">Word Length:</label>
+                    <div id="lengthRangeContainer">
+                        <div id="lengthRange"></div>
+                        <div class="slider-labels">
+                            <span id="minLengthValue">2</span> – <span id="maxLengthValue">15</span>
+                        </div>
                     </div>
                 </div>
-
-                <input type="hidden" id="lengthMode" value="greater" />
-
 
                 <div class="form-group">
                     <label class="section-label">
