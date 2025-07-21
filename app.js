@@ -39,12 +39,13 @@ noUiSlider.create(lengthSlider, {
     max: 15
   },
   // Move handle on tap, bars are draggable
-  behaviour: 'tap-drag',
+  behaviour: 'smooth-steps-tap-snap',
   tooltips: true,
   format: {
     to: value => Math.round(value),
     from: value => Number(value)
   },
+  // cssPrefix: 'noUi-', // defaults to 'noUi-',
 
 });
 

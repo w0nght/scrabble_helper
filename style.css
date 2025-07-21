@@ -323,7 +323,7 @@ input[type="range"],
 }
 
 .noUi-connect {
-    background: var(--accent-color, #444);
+    background: var(--button-bg, #444);
 }
 
 .noUi-handle {
@@ -608,7 +608,7 @@ button:hover {
 .toggle-group {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
 }
 
 .toggle-btn {
@@ -769,14 +769,18 @@ footer section {
     }
 
     .tile {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
         font-size: clamp(1.8rem, 5vw, 3.4rem);
     }
 
 
     .toggle-btn {
         flex: 1 1 100%;
+    }
+
+    .toggle-group {
+        gap: 6px;
     }
 
     #results {
@@ -791,5 +795,16 @@ footer section {
     .scrabble-input::placeholder {
         font-size: 0.8rem;
         /* or try 0.8rem */
+    }
+}
+
+@media (max-width: 360px) {
+    .tile {
+        width: 22px;
+        height: 22px;
+    }
+
+    .toggle-group {
+        gap: 4px;
     }
 }
