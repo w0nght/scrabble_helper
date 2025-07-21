@@ -26,6 +26,8 @@ function matchRequiredPosition(word, letter, pos) {
   return word[index] === letter;
 }
 
+let isSearching = false;
+
 let lengthSlider = document.getElementById('lengthRange');
 
 noUiSlider.create(lengthSlider, {
@@ -119,8 +121,12 @@ function updateSummaryLabel() {
   if (showAll) {
     text = `Showing all suggestions (ignoring length filter), using ${wildcardCount} wildcard${wildcardCount !== 1 ? "s" : ""}`;
   } else {
-    text = `Searching for words between ${min} and ${max} letters with ${wildcardCount} wildcard${wildcardCount !== 1 ? "s" : ""}`;
+    const wildcardText = `with ${wildcardCount} wildcard${wildcardCount !== 1 ? "s" : ""}`;
+    text = (min === max)
+      ? `Searching for ${min}-letter words ${wildcardText}`
+      : `Searching for words between ${min} and ${max} letters ${wildcardText}`;
   }
+
   console.log("summaryLabel:", text);
   console.log("min:", min);
   console.log("max:", max);
@@ -130,75 +136,89 @@ function updateSummaryLabel() {
 
 
 function findWords() {
-  // 1. Get inputs and elements
+  // 1. Get user inputs
   const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
   const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
   const requiredLetter = document.getElementById("requiredLetter").value.toUpperCase();
   const requiredPosition = parseInt(document.getElementById("requiredPosition").value);
   const showAll = document.getElementById("showAll").checked;
-
   const [minLength, maxLength] = lengthSlider.noUiSlider.get().map(v => parseInt(v));
-
   const allLetters = input + '?'.repeat(wildcardCount);
   const availableLetters = allLetters.split('');
 
-  // 2. Get DOM elements
+  // 2. Handle empty input
+  if (!input) {
+    const resultsContainer = document.getElementById("results");
+    const resultsHeader = document.getElementById("resultsHeader");
+    const resultsBar = document.getElementById("resultsBar");
+
+    resultsContainer.innerHTML = '';
+    resultsHeader.textContent = '';
+    resultsBar.style.display = "none";
+    resultsContainer.textContent = "Please enter some letters. 🙏";
+    return;
+  }
+
+  // 3. Prepare UI and elements
   const resultsContainer = document.getElementById("results");
   const resultsHeader = document.getElementById("resultsHeader");
   const resultsBar = document.getElementById("resultsBar");
   const resultsTextLoader = document.getElementById("resultsTextLoader");
   const resultsTileLoader = document.getElementById("resultsTileLoader");
-  const MIN_FLIP_DURATION = 1400; // total time to let tiles animate. Adjust delay duration to simulate processing time
+  const MIN_FLIP_DURATION = 1400;
 
-  // 3. Prepare UI
+  // Clear previous results and show loading state
   resultsContainer.innerHTML = '';
   resultsHeader.textContent = '';
   resultsBar.style.display = "none";
-  resultsTextLoader.style.display = "block"; // show loading spinner
-  resultsTileLoader.style.display = "flex"; // show loading flipping tile
+  resultsTextLoader.style.display = "block";
+  resultsTileLoader.style.display = "flex";
 
-  // Scroll BEFORE results are calculated
+  // Prevent overlapping searches
+  if (isSearching) return;
+  isSearching = true;
+
+  // Scroll to results
   document.getElementById("resultsAnchor").scrollIntoView({ behavior: "smooth" });
 
-  // 4. Delay to simulate "thinking time"
+  // 4. Simulate delay for animation and UX
   setTimeout(() => {
     const matches = [];
 
-    // 5. Match words from dictionary
+    // 5. Loop through dictionary and find matching words
     for (const word of words) {
-      // Filter by word length if "Show All" is not checked
-      if (!showAll && (word.length < minLength || word.length > maxLength)) {
-        continue;
-      }
+      // Skip words outside length range (unless "Show All" is on)
+      if (!showAll && (word.length < minLength || word.length > maxLength)) continue;
 
-      // Check required letter at a position (if specified)
+      // Skip if word doesn’t match required letter at position
       if (!matchRequiredPosition(word, requiredLetter, requiredPosition)) continue;
 
-      // Handle letter matching with wildcards
+      // Prepare for letter matching
       const tempLetters = [...availableLetters];
       const wordLetters = word.toUpperCase().split('');
       const wildcardIndices = [];
       let valid = true;
 
+      // Try matching letters (with wildcards)
       for (let i = 0; i < wordLetters.length; i++) {
         const letter = wordLetters[i];
         const idx = tempLetters.indexOf(letter);
 
         if (idx !== -1) {
-          tempLetters.splice(idx, 1); // Use the letter
+          tempLetters.splice(idx, 1);
         } else {
           const wildIdx = tempLetters.indexOf('?');
           if (wildIdx !== -1) {
-            wildcardIndices.push(i); // Track wildcard positions
+            wildcardIndices.push(i);
             tempLetters.splice(wildIdx, 1);
           } else {
-            valid = false; // Letter not available at all
+            valid = false;
             break;
           }
         }
       }
 
-      // Add valid word to matches
+      // Add to results if valid
       if (valid) {
         matches.push({
           word,
@@ -208,22 +228,27 @@ function findWords() {
       }
     }
 
-    // 6. Sort matches if a sort option is selected
+    // 6. Sort matches based on dropdown value
     const sortBy = document.getElementById("sortBy").value;
     if (sortBy === "score") {
       matches.sort((a, b) => b.score - a.score);
-    } else if (sortBy === "length") {
+    } else if (sortBy === "length-desc") {
       matches.sort((a, b) => b.word.length - a.word.length);
+    } else if (sortBy === "length-asc") {
+      matches.sort((a, b) => a.word.length - b.word.length);
     } else if (sortBy === "alpha") {
       matches.sort((a, b) => a.word.localeCompare(b.word));
     }
 
-    // 7. Hide loader only after full flip is done
+
+    // 7. Hide loader after full flip animation is done
     resultsTextLoader.style.display = "none";
     resultsTileLoader.style.display = "none";
 
     // 8. Handle no matches
     if (matches.length === 0) {
+      resultsTextLoader.style.display = "none";
+      resultsTileLoader.style.display = "none";
       resultsBar.style.display = "none";
       resultsContainer.textContent = "No matching words found. 😢";
       return;
@@ -257,6 +282,8 @@ function findWords() {
       span.style.animationDelay = `${index * 40}ms`;
       resultsContainer.appendChild(span);
     });
+    // 11. Done searching
+    isSearching = false; // Allow future calls again
   }, MIN_FLIP_DURATION); // wait this long before rendering anything
 }
 
@@ -306,7 +333,7 @@ function resetAllFilters() {
     document.getElementById("showAll").checked = false;
     document.getElementById("sortBy").value = "none";
 
-    // ✅ Reset the range slider to default values (e.g., 3 to 8)
+    // Reset the range slider to default values (e.g., 3 to 8)
     lengthSlider.noUiSlider.set([3, 8]);
 
     // Reset toggle states
@@ -348,6 +375,7 @@ themeToggle.addEventListener('click', () => {
   localStorage.setItem('theme', isDark ? 'light' : 'dark');
 });
 
+// DOM elements
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
@@ -359,6 +387,20 @@ window.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll(".flip-tile").forEach((tile, i) => {
     tile.style.setProperty("--i", i);
   });
+
+  // bind the submit handler 
+  document.querySelector('.filters').addEventListener('submit', function (e) {
+    e.preventDefault();
+    console.log("Form submitted");
+    findWords();
+  });
+
+  // Sort dropdown change listener
+  document.getElementById('sortBy').addEventListener('change', () => {
+    findWords();
+  });
+
+  // Add any other listeners here (like reset buttons, etc.)
 });
 
 // Open/Close Menu logic

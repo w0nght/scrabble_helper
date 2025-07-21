@@ -62,7 +62,7 @@
         </div>
 
         <div id="formWrapper">
-            <form class="filters" onsubmit="event.preventDefault(); findWords();">
+            <form class="filters" autocomplete="off">
                 <div class="form-group">
                     <label class="section-label">Find words for Scrabble:</label>
                     <input id="letters" type="text" class="scrabble-input" maxlength="15" placeholder="Enter letters" />
@@ -116,7 +116,7 @@
                 <p id="summaryLabel" class="filter-info"></p>
 
                 <div class="form-group">
-                    <button onclick="findWords()" class="primary-button">Find Words!</button>
+                    <button type="submit" class="primary-button">Find Words!</button>
                 </div>
                 <div class="form-group">
                     <button type="button" class="reset-button" onclick="resetAllFilters()">
@@ -143,11 +143,11 @@
                 <div id="resultsHeader" class="results-count">0 words found</div>
                 <div class="sort-dropdown">
                     <label for="sortBy">Sort by</label>
-                    <select id="sortBy" class="styled-select" onchange="findWords()">
-                        <option value="none">Default</option>
+                    <select id="sortBy" class="styled-select">
+                        <option value="alpha" selected>Alphabetical (A to Z)</option>
                         <option value="score">Score (High to Low)</option>
-                        <option value="length">Length (Long to Short)</option>
-                        <option value="alpha">Alphabetical (A to Z)</option>
+                        <option value="length-desc">Length (Long to Short)</option>
+                        <option value="length-asc">Length (Short to Long)</option>
                     </select>
                 </div>
             </div>
