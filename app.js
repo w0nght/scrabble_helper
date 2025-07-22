@@ -46,7 +46,7 @@ noUiSlider.create(lengthSlider, {
     from: value => Number(value)
   },
   // cssPrefix: 'noUi-', // defaults to 'noUi-',
-
+  pips: { mode: 'count', values: 3, density: 3, }
 });
 
 // Update visible values
