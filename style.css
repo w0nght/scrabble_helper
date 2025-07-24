@@ -674,11 +674,16 @@ button:hover {
 #results small {
     font-size: 0.6em;
     color: var(--text-tertiary);
+    padding-top: 10px;
 }
 
 #results .wildcard {
     color: var(--wild-card-color);
-    font-weight: var(--font-extra-bold);
+    padding: 0 4px;
+    border-radius: 4px;
+    background-color: transparent;
+    text-decoration: underline dotted;
+    text-underline-offset: 2px;
 }
 
 #results .high-score {

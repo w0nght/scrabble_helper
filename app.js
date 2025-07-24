@@ -281,9 +281,9 @@ function findWords() {
 
 
       // Mark high score words if desired
-      if (!showAll && match.word.length === longestWordLength) {
-        span.classList.add("high-score");
-      }
+      // if (!showAll && match.word.length === longestWordLength) {
+      //   span.classList.add("high-score");
+      // }
 
       // Animate each result
       span.style.animationDelay = `${index * 40}ms`;
