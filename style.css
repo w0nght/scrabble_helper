@@ -30,6 +30,15 @@
     --shadow-color-strong: rgba(0, 0, 0, 0.12);
     --highlight-color: goldenrod;
     --wild-card-color: #d49100;
+    --main-font: 'M PLUS Rounded 1c', sans-serif;
+    /* Font weights */
+    --font-thin: 100;
+    --font-light: 300;
+    --font-regular: 400;
+    --font-medium: 500;
+    --font-bold: 700;
+    --font-extra-bold: 800;
+    --font-black: 900;
 }
 
 [data-theme="dark"] {
@@ -59,7 +68,9 @@
 }
 
 body {
-    font-family: 'Nunito', sans-serif;
+    font-family: var(--main-font);
+    font-weight: var(--font-regular);
+    font-size: 1.2em;
     background-color: var(--page-bg);
     color: var(--text-primary);
     margin: 0;
@@ -123,8 +134,7 @@ body::after {
 #sideMenu a {
     text-decoration: none;
     color: var(--text-primary);
-    font-weight: bold;
-    font-size: 1rem;
+    font-weight: var(--font-bold);
     padding: 6px 0;
     border-bottom: 1px solid var(--border-color);
     transition: color 0.3s;
@@ -142,9 +152,9 @@ body::after {
 
 #introText {
     text-align: center;
-    max-width: 600px;
     margin: 0 auto;
     padding-bottom: 20px;
+    font-size: 0.8em;
 }
 
 .container,
@@ -249,7 +259,7 @@ footer {
     height: 52px;
     width: 57px;
     font-family: "Scramble", sans-serif;
-    font-weight: bold;
+    font-weight: var(--font-bold);
     font-size: clamp(3.6rem, 4vw, 4rem);
     display: flex;
     align-items: center;
@@ -285,16 +295,14 @@ h1 {
 
 .scrabble-input,
 input[type="text"] {
-    /* font-family: "Scramble", sans-serif; */
     letter-spacing: 4px;
-    text-transform: uppercase;
 }
 
 .scrabble-input,
 input[type="text"],
 input[type="number"],
-select,
 input[type="range"],
+select,
 .position-inputs input {
     background-color: var(--input-bg);
     color: var(--text-primary);
@@ -307,6 +315,7 @@ input[type="range"],
     box-sizing: border-box;
 }
 
+.scrabble-input::placeholder,
 .position-inputs input::placeholder {
     font-size: 1rem;
 }
@@ -314,7 +323,7 @@ input[type="range"],
 /* Range slider START */
 
 #lengthRangeContainer {
-    padding-top: 30px;
+    padding-top: 40px;
     margin: 20px 20px 30px 30px;
 }
 
@@ -347,13 +356,13 @@ input[type="range"],
     background: var(--result-tile-bg);
     border: 2px solid var(--border-color-strong);
     color: var(--text-primary);
-    font-weight: bold;
+    font-weight: var(--font-bold);
     font-size: 14px;
     border-radius: 6px;
     padding: 4px 8px;
     box-shadow: 1px 2px 4px var(--shadow-color);
     transform: translate(-50%, -10%);
-    bottom: 100%;
+    bottom: 110%;
 }
 
 #lengthRange .noUi-handle {
@@ -379,7 +388,7 @@ input[type="range"],
     transform: translateX(-50%);
     font-size: 0.75rem;
     color: var(--text-secondary);
-    font-weight: normal;
+    font-weight: var(--font-bold);
     background: transparent;
     content: none;
 }
@@ -409,7 +418,7 @@ button {
     padding: 12px;
     background-color: var(--button-bg);
     color: var(--button-text);
-    font-weight: bold;
+    font-weight: var(--font-bold);
     border: none;
     border-radius: 10px;
     font-size: 1.1em;
@@ -428,7 +437,7 @@ button:hover {
     background-color: var(--reset-btn-bg);
     color: var(--reset-btn-text);
     border: 2px solid var(--border-color);
-    font-weight: normal;
+    font-weight: var(--font-bold);
     border-radius: 10px;
     padding: 12px;
     font-size: 1.1em;
@@ -479,7 +488,6 @@ button:hover {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 12px;
-    font-size: 1.1em;
     width: 100%;
     box-sizing: border-box;
     appearance: none;
@@ -512,12 +520,14 @@ button:hover {
     margin-top: 0;
 }
 
+.form-group:nth-child(3) {
+    margin-bottom: 26px;
+}
+
 .section-label {
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: 1.3rem;
+    font-weight: var(--font-medium);
     color: var(--text-secondary);
-    margin-bottom: 10px;
-    margin-top: 20px;
 }
 
 #summaryLabel {
@@ -549,8 +559,8 @@ button:hover {
 }
 
 .results-count {
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: var(--font-medium);
+    /* font-size: 1rem; */
     color: var(--text-primary);
 }
 
@@ -559,10 +569,11 @@ button:hover {
     align-items: center;
     gap: 8px;
     font-size: 0.95rem;
+    font-weight: var(--font-medium);
 }
 
 .sort-dropdown label {
-    font-weight: 500;
+    font-weight: var(--font-medium);
     color: var(--text-secondary);
 }
 
@@ -602,10 +613,10 @@ button:hover {
     height: 40px;
     /* background-color: var(--tile-bg, #f1e3c6);
     color: var(--tile-text, #333); */
-    font-weight: bold;
+    font-weight: var(--font-bold);
     font-family: 'Scramble', serif;
     font-size: 3em;
-    padding: 3px;
+    padding: 6px;
     text-align: center;
     line-height: 40px;
     border-radius: 6px;
@@ -643,8 +654,7 @@ button:hover {
     border-radius: 12px;
     box-shadow: 0 2px 6px var(--shadow-color);
     padding: 14px 10px;
-    font-size: 1em;
-    font-weight: bold;
+    font-weight: var(--font-bold);
     color: var(--text-primary);
     display: inline-flex;
     align-items: center;
@@ -668,12 +678,12 @@ button:hover {
 
 #results .wildcard {
     color: var(--wild-card-color);
-    font-weight: bold;
+    font-weight: var(--font-extra-bold);
 }
 
 #results .high-score {
     color: var(--highlight-color);
-    font-weight: bold;
+    font-weight: var(--font-medium);
 }
 
 .toggle-group {
@@ -690,7 +700,7 @@ button:hover {
     border: 2px solid var(--border-color);
     border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: var(--font-bold);
     transition: all 0.2s ease;
     text-align: center;
     min-width: 80px;

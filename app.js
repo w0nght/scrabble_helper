@@ -265,14 +265,20 @@ function findWords() {
     matches.forEach((match, index) => {
       const span = document.createElement("span");
 
-      // Highlight wildcards
-      span.innerHTML = match.word
+      // Format the word: capitalize first letter, lowercase the rest
+      const formattedChars = match.word
+        .toLowerCase()
         .split('')
-        .map((char, i) => match.wildcards.includes(i)
-          ? `<span class="wildcard">${char}</span>`
-          : char
-        )
-        .join('') + ` <small>${match.score} pts</small>`;
+        .map((char, i) => {
+          let displayChar = i === 0 ? char.toUpperCase() : char;
+          if (match.wildcards.includes(i)) {
+            return `<span class="wildcard">${displayChar}</span>`;
+          }
+          return displayChar;
+        });
+
+      span.innerHTML = formattedChars.join('') + ` <small>${match.score} pts</small>`;
+
 
       // Mark high score words if desired
       if (!showAll && match.word.length === longestWordLength) {
