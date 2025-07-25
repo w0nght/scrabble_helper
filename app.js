@@ -135,6 +135,82 @@ function updateSummaryLabel() {
   document.getElementById("summaryLabel").textContent = text;
 }
 
+// === ELEMENT SELECTORS ===
+const dropdownToggle = document.getElementById("dropdownToggle");
+const dropdownMenu = document.getElementById("dropdownMenu");
+const dropdownIcon = document.getElementById("dropdownIcon");
+const selectedOption = document.getElementById("selectedOption");
+
+const menuToggle = document.getElementById("menuToggle");
+const sideMenu = document.getElementById("sideMenu");
+const closeMenu = document.getElementById("closeMenu");
+
+// === DROPDOWN LOGIC ===
+let currentSort = "alpha"; // default
+
+function initDropdown() {
+  dropdownToggle.addEventListener("click", () => {
+    const isOpen = dropdownMenu.classList.toggle("show");
+    dropdownToggle.classList.toggle("open", isOpen);
+  });
+
+  dropdownMenu.addEventListener("click", (e) => {
+    if (e.target.tagName === "LI") {
+      currentSort = e.target.getAttribute("data-value");
+      selectedOption.textContent = e.target.textContent;
+
+      dropdownMenu.querySelectorAll("li").forEach(li => li.classList.remove("selected"));
+      e.target.classList.add("selected");
+
+      dropdownMenu.classList.remove("show");
+      dropdownToggle.classList.remove("open");
+
+      findWords(); // trigger update with new sort
+    }
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+      dropdownMenu.classList.remove("show");
+      dropdownToggle.classList.remove("open");
+    }
+  });
+}
+
+// === SIDE MENU LOGIC ===
+function initSideMenu() {
+  menuToggle.addEventListener("click", () => {
+    sideMenu.classList.add("open");
+  });
+
+  closeMenu.addEventListener("click", () => {
+    sideMenu.classList.remove("open");
+  });
+
+  sideMenu.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+      sideMenu.classList.remove("open");
+    });
+  });
+
+  // Close side menu when clicking outside
+  document.addEventListener("click", (e) => {
+    // Close side menu if clicked outside
+    if (
+      sideMenu.classList.contains("open") &&
+      !sideMenu.contains(e.target) &&
+      !menuToggle.contains(e.target)
+    ) {
+      sideMenu.classList.remove("open");
+    }
+  });
+}
+
+// === INITIALIZE ===
+initDropdown();
+initSideMenu();
+
 
 function findWords() {
   // 1. Get user inputs
@@ -152,6 +228,9 @@ function findWords() {
     const resultsContainer = document.getElementById("results");
     const resultsHeader = document.getElementById("resultsHeader");
     const resultsBar = document.getElementById("resultsBar");
+
+    // Scroll to results
+    document.getElementById("resultsAnchor").scrollIntoView({ behavior: "smooth" });
 
     resultsContainer.innerHTML = '';
     resultsHeader.textContent = '';
@@ -230,7 +309,7 @@ function findWords() {
     }
 
     // 6. Sort matches based on dropdown value
-    const sortBy = document.getElementById("sortBy").value;
+    const sortBy = currentSort;
     if (sortBy === "score") {
       matches.sort((a, b) => b.score - a.score);
     } else if (sortBy === "length-desc") {
@@ -338,7 +417,6 @@ function resetAllFilters() {
     document.getElementById("requiredPosition").value = "";
     document.getElementById("wildcardCount").value = 0;
     document.getElementById("showAll").checked = false;
-    document.getElementById("sortBy").value = "none";
 
     // Reset the range slider to default values (e.g., 3 to 8)
     lengthSlider.noUiSlider.set([3, 8]);
@@ -402,33 +480,9 @@ window.addEventListener('DOMContentLoaded', () => {
     findWords();
   });
 
-  // Sort dropdown change listener
-  document.getElementById('sortBy').addEventListener('change', () => {
-    findWords();
-  });
-
   // Add any other listeners here (like reset buttons, etc.)
 });
 
-// Open/Close Menu logic
-const menuToggle = document.getElementById("menuToggle");
-const sideMenu = document.getElementById("sideMenu");
-const closeMenu = document.getElementById("closeMenu");
-
-menuToggle.addEventListener("click", () => {
-  sideMenu.classList.add("open");
-});
-
-closeMenu.addEventListener("click", () => {
-  sideMenu.classList.remove("open");
-});
-
-// Optional: Close menu when a link is clicked
-sideMenu.querySelectorAll("a").forEach(link => {
-  link.addEventListener("click", () => {
-    sideMenu.classList.remove("open");
-  });
-});
 
 // === Funny rotating intro messages ===
 const introMessages = [

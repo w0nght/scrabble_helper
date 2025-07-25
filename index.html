@@ -152,14 +152,17 @@
 
             <div id="resultsBar" class="results-bar" style="display: none;">
                 <div id="resultsHeader" class="results-count">0 words found</div>
-                <div class="sort-dropdown">
-                    <label for="sortBy">Sort by</label>
-                    <select id="sortBy" class="styled-select">
-                        <option value="alpha" selected>Alphabetical (A to Z)</option>
-                        <option value="score">Score (High to Low)</option>
-                        <option value="length-desc">Length (Long to Short)</option>
-                        <option value="length-asc">Length (Short to Long)</option>
-                    </select>
+                <div class="sort-dropdown dropdown">
+                    <div id="dropdownToggle">
+                        <span id="selectedOption">Alphabetical (A to Z)</span>
+                        <i id="dropdownIcon" class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <ul id="dropdownMenu">
+                        <li data-value="alpha" class="selected">Alphabetical (A to Z)</li>
+                        <li data-value="score">Score (High to Low)</li>
+                        <li data-value="length-desc">Length (Long to Short)</li>
+                        <li data-value="length-asc">Length (Short to Long)</li>
+                    </ul>
                 </div>
             </div>
 
