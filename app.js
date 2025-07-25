@@ -212,6 +212,16 @@ initDropdown();
 initSideMenu();
 
 
+function showToast(message, duration = 3000) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, duration);
+}
+
 function findWords() {
   // 1. Get user inputs
   const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
@@ -263,114 +273,133 @@ function findWords() {
 
   // 4. Simulate delay for animation and UX
   setTimeout(() => {
-    const matches = [];
+    try {
+      // throw new Error("Test error handling");
+      const matches = [];
+      let skippedDueToPosition = 0;
 
-    // 5. Loop through dictionary and find matching words
-    for (const word of words) {
-      // Skip words outside length range (unless "Show All" is on)
-      if (!showAll && (word.length < minLength || word.length > maxLength)) continue;
+      // 5. Loop through dictionary and find matching words
+      for (const word of words) {
+        // Skip words outside length range (unless "Show All" is on)
+        if (!showAll && (word.length < minLength || word.length > maxLength)) continue;
 
-      // Skip if word doesn’t match required letter at position
-      if (!matchRequiredPosition(word, requiredLetter, requiredPosition)) continue;
+        // Skip if word doesn’t match required letter at position
+        if (!matchRequiredPosition(word, requiredLetter, requiredPosition)) {
+          skippedDueToPosition++;
+          continue;
+        }
 
-      // Prepare for letter matching
-      const tempLetters = [...availableLetters];
-      const wordLetters = word.toUpperCase().split('');
-      const wildcardIndices = [];
-      let valid = true;
+        // Prepare for letter matching
+        const tempLetters = [...availableLetters];
+        const wordLetters = word.toUpperCase().split('');
+        const wildcardIndices = [];
+        let valid = true;
 
-      // Try matching letters (with wildcards)
-      for (let i = 0; i < wordLetters.length; i++) {
-        const letter = wordLetters[i];
-        const idx = tempLetters.indexOf(letter);
+        // Try matching letters (with wildcards)
+        for (let i = 0; i < wordLetters.length; i++) {
+          const letter = wordLetters[i];
+          const idx = tempLetters.indexOf(letter);
 
-        if (idx !== -1) {
-          tempLetters.splice(idx, 1);
-        } else {
-          const wildIdx = tempLetters.indexOf('?');
-          if (wildIdx !== -1) {
-            wildcardIndices.push(i);
-            tempLetters.splice(wildIdx, 1);
+          if (idx !== -1) {
+            tempLetters.splice(idx, 1);
           } else {
-            valid = false;
-            break;
+            const wildIdx = tempLetters.indexOf('?');
+            if (wildIdx !== -1) {
+              wildcardIndices.push(i);
+              tempLetters.splice(wildIdx, 1);
+            } else {
+              valid = false;
+              break;
+            }
           }
+        }
+
+        // Add to results if valid
+        if (valid) {
+          matches.push({
+            word,
+            wildcards: wildcardIndices,
+            score: getWordScore(word)
+          });
         }
       }
 
-      // Add to results if valid
-      if (valid) {
-        matches.push({
-          word,
-          wildcards: wildcardIndices,
-          score: getWordScore(word)
-        });
+      // 6. Sort matches based on dropdown value
+      const sortBy = currentSort;
+      if (sortBy === "score") {
+        matches.sort((a, b) => b.score - a.score);
+      } else if (sortBy === "length-desc") {
+        matches.sort((a, b) => b.word.length - a.word.length);
+      } else if (sortBy === "length-asc") {
+        matches.sort((a, b) => a.word.length - b.word.length);
+      } else if (sortBy === "alpha") {
+        matches.sort((a, b) => a.word.localeCompare(b.word));
       }
-    }
-
-    // 6. Sort matches based on dropdown value
-    const sortBy = currentSort;
-    if (sortBy === "score") {
-      matches.sort((a, b) => b.score - a.score);
-    } else if (sortBy === "length-desc") {
-      matches.sort((a, b) => b.word.length - a.word.length);
-    } else if (sortBy === "length-asc") {
-      matches.sort((a, b) => a.word.length - b.word.length);
-    } else if (sortBy === "alpha") {
-      matches.sort((a, b) => a.word.localeCompare(b.word));
-    }
 
 
-    // 7. Hide loader after full flip animation is done
-    resultsTextLoader.style.display = "none";
-    resultsTileLoader.style.display = "none";
-
-    // 8. Handle no matches
-    if (matches.length === 0) {
+      // 7. Hide loader after full flip animation is done
       resultsTextLoader.style.display = "none";
       resultsTileLoader.style.display = "none";
-      resultsBar.style.display = "none";
-      resultsContainer.textContent = "No matching words found. 😢";
-      isSearching = false; // UNLOCK future searches
-      return;
+
+      // 8. Handle no matches
+      if (matches.length === 0) {
+        resultsTextLoader.style.display = "none";
+        resultsTileLoader.style.display = "none";
+        resultsBar.style.display = "none";
+
+        if (skippedDueToPosition > 0) {
+          resultsContainer.textContent = "No words match the required letter at that position. 😬";
+        } else {
+          resultsContainer.textContent = "No matching words found. 😢 Try using more letters or wildcards.";
+        }
+
+        isSearching = false; // UNLOCK future searches
+        return;
+      }
+
+      // 9. Update results header
+      resultsBar.style.display = "flex";
+      resultsHeader.textContent = `Found ${matches.length} valid word${matches.length !== 1 ? 's' : ''}`;
+
+      // 10. Display results with fade-in animation
+      const longestWordLength = Math.max(...matches.map(m => m.word.length));
+
+      matches.forEach((match, index) => {
+        const span = document.createElement("span");
+
+        // Format the word: capitalize first letter, lowercase the rest
+        const formattedChars = match.word
+          .toLowerCase()
+          .split('')
+          .map((char, i) => {
+            let displayChar = i === 0 ? char.toUpperCase() : char;
+            if (match.wildcards.includes(i)) {
+              return `<span class="wildcard">${displayChar}</span>`;
+            }
+            return displayChar;
+          });
+
+        span.innerHTML = formattedChars.join('') + ` <small>${match.score} pts</small>`;
+
+
+        // Mark high score words if desired
+        // if (!showAll && match.word.length === longestWordLength) {
+        //   span.classList.add("high-score");
+        // }
+
+        // Animate each result
+        span.style.animationDelay = `${index * 40}ms`;
+        resultsContainer.appendChild(span);
+      });
+      // 11. Done searching
+      isSearching = false; // Allow future calls again
+    } catch (error) {
+      console.error("Search failed:", error);
+      resultsTextLoader.style.display = "none";
+      resultsTileLoader.style.display = "none";
+      isSearching = false;
+      showToast("❌ Something went wrong. Please try again!");
     }
-
-    // 9. Update results header
-    resultsBar.style.display = "flex";
-    resultsHeader.textContent = `Found ${matches.length} valid word${matches.length !== 1 ? 's' : ''}`;
-
-    // 10. Display results with fade-in animation
-    const longestWordLength = Math.max(...matches.map(m => m.word.length));
-
-    matches.forEach((match, index) => {
-      const span = document.createElement("span");
-
-      // Format the word: capitalize first letter, lowercase the rest
-      const formattedChars = match.word
-        .toLowerCase()
-        .split('')
-        .map((char, i) => {
-          let displayChar = i === 0 ? char.toUpperCase() : char;
-          if (match.wildcards.includes(i)) {
-            return `<span class="wildcard">${displayChar}</span>`;
-          }
-          return displayChar;
-        });
-
-      span.innerHTML = formattedChars.join('') + ` <small>${match.score} pts</small>`;
-
-
-      // Mark high score words if desired
-      // if (!showAll && match.word.length === longestWordLength) {
-      //   span.classList.add("high-score");
-      // }
-
-      // Animate each result
-      span.style.animationDelay = `${index * 40}ms`;
-      resultsContainer.appendChild(span);
-    });
-    // 11. Done searching
-    isSearching = false; // Allow future calls again
   }, MIN_FLIP_DURATION); // wait this long before rendering anything
 }
 
