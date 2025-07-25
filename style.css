@@ -55,7 +55,7 @@
     --input-bg-secondary: #3c4043;
     --button-bg: #8ab4f8;
     --button-bg-hover: #9ac0f9;
-    --button-text: #202124;
+    --button-text: #e8eaed;
     --reset-btn-bg: #444;
     --reset-btn-text: #ccc;
     --reset-btn-hover-bg: #555;
@@ -400,7 +400,6 @@ select,
     background: var(--input-bg-secondary);
     border-color: var(--highlight-color);
 }
-
 
 #lengthRange .noUi-pips {
     color: var(--text-tertiary);
@@ -754,7 +753,7 @@ button:hover {
     flex: 1 1 30%;
     padding: 10px;
     background-color: var(--toggle-btn-bg);
-    color: var(--text-primary);
+    color: var(--button-text);
     border: 2px solid var(--border-color);
     border-radius: 8px;
     cursor: pointer;
