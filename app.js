@@ -331,6 +331,7 @@ function findWords() {
       resultsTileLoader.style.display = "none";
       resultsBar.style.display = "none";
       resultsContainer.textContent = "No matching words found. 😢";
+      isSearching = false; // UNLOCK future searches
       return;
     }
 
