@@ -21,7 +21,6 @@
     <link href="https://fonts.cdnfonts.com/css/byte-sized-computing" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Signika&display=swap" rel="stylesheet"> -->
     <!-- noUiSlider CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css" />
 
@@ -137,7 +136,6 @@
             </form>
 
 
-
             <div id="resultsTextLoader" class="results-loader" style="display: none;">
                 <i class="fas fa-spinner fa-spin"></i> Finding words…
             </div>
@@ -154,12 +152,12 @@
                 <div id="resultsHeader" class="results-count">0 words found</div>
                 <div class="sort-dropdown dropdown">
                     <div id="dropdownToggle">
-                        <span id="selectedOption">Alphabetical (A to Z)</span>
+                        <span id="selectedOption">Score (High to Low)</span>
                         <i id="dropdownIcon" class="fa-solid fa-chevron-down"></i>
                     </div>
                     <ul id="dropdownMenu">
-                        <li data-value="alpha" class="selected">Alphabetical (A to Z)</li>
-                        <li data-value="score">Score (High to Low)</li>
+                        <li data-value="alpha">Alphabetical (A to Z)</li>
+                        <li data-value="score" class="selected">Score (High to Low)</li>
                         <li data-value="length-desc">Length (Long to Short)</li>
                         <li data-value="length-asc">Length (Short to Long)</li>
                     </ul>

@@ -146,7 +146,7 @@ const sideMenu = document.getElementById("sideMenu");
 const closeMenu = document.getElementById("closeMenu");
 
 // === DROPDOWN LOGIC ===
-let currentSort = "alpha"; // default
+let currentSort = "score"; // default
 
 function initDropdown() {
   dropdownToggle.addEventListener("click", () => {
