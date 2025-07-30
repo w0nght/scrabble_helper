@@ -1,4 +1,9 @@
+// === GLOBAL ===
 let words = [];
+let currentSort = "score"; // default
+
+let isSearching = false;
+let lengthSlider = document.getElementById('lengthRange');
 
 fetch("Collins_2019.json")
   .then(res => res.json())
@@ -25,10 +30,6 @@ function matchRequiredPosition(word, letter, pos) {
   const index = parseInt(pos) - 1;
   return word[index] === letter;
 }
-
-let isSearching = false;
-
-let lengthSlider = document.getElementById('lengthRange');
 
 noUiSlider.create(lengthSlider, {
   start: [2, 8],         // Default values
@@ -62,6 +63,124 @@ lengthSlider.noUiSlider.on('update', (values, handle) => {
 });
 
 
+// === THEME TOGGLE LOGIC ===
+const themeToggle = document.getElementById('themeToggle');
+
+themeToggle.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const isDark = currentTheme === 'dark';
+
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  themeToggle.textContent = isDark ? '🌞' : '🌙';
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+});
+
+// === DOM READY INITIALIZATION ===
+window.addEventListener('DOMContentLoaded', () => {
+  // === APPLY SAVED THEME ===
+  const saved = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  themeToggle.textContent = saved === 'dark' ? '🌙' : '🌞';
+
+  updateSummaryLabel();
+
+  // === STAGGER TILE ANIMATION ON PAGE LOAD ===
+  document.querySelectorAll(".flip-tile").forEach((tile, i) => {
+    tile.style.setProperty("--i", i);
+  });
+
+  // === ELEMENT SELECTORS ===
+  const dropdownToggle = document.getElementById("dropdownToggle");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  const selectedOption = document.getElementById("selectedOption");
+
+  const menuToggle = document.getElementById("menuToggle");
+  const sideMenu = document.getElementById("sideMenu");
+  const closeMenu = document.getElementById("closeMenu");
+
+  const form = document.querySelector('.filters');
+
+  // === DROPDOWN SORT LOGIC ===
+  function initDropdown() {
+    // Toggle menu on click
+    dropdownToggle.addEventListener("click", () => {
+      const isOpen = dropdownMenu.classList.toggle("show");
+      dropdownToggle.classList.toggle("open", isOpen);
+    });
+
+    // Handle option select
+    dropdownMenu.addEventListener("click", (e) => {
+      if (e.target.tagName === "LI") {
+        currentSort = e.target.getAttribute("data-value");
+        selectedOption.textContent = e.target.textContent;
+
+        dropdownMenu.querySelectorAll("li").forEach(li => li.classList.remove("selected"));
+        e.target.classList.add("selected");
+
+        dropdownMenu.classList.remove("show");
+        dropdownToggle.classList.remove("open");
+
+        findWords("sort"); // Trigger with "sort" mode
+      }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove("show");
+        dropdownToggle.classList.remove("open");
+      }
+    });
+  }
+
+  // === SIDE MENU LOGIC ===
+  function initSideMenu() {
+    menuToggle.addEventListener("click", () => {
+      sideMenu.classList.add("open");
+    });
+
+    closeMenu.addEventListener("click", () => {
+      sideMenu.classList.remove("open");
+    });
+
+    sideMenu.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        sideMenu.classList.remove("open");
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (
+        sideMenu.classList.contains("open") &&
+        !sideMenu.contains(e.target) &&
+        !menuToggle.contains(e.target)
+      ) {
+        sideMenu.classList.remove("open");
+      }
+    });
+  }
+
+  // === FORM SUBMIT HANDLER ===
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    console.log("Form submitted");
+    findWords();
+  });
+
+  // === SORT TRIGGER (Fallback via DOM mutation) ===
+  document.getElementById('dropdownToggle').addEventListener('DOMSubtreeModified', () => {
+    findWords("sort");
+    console.log("Perform sort (DOMSubtreeModified fallback)");
+  });
+
+  // === INIT ===
+  initDropdown();
+  initSideMenu();
+
+  // Add more listeners below (e.g., reset buttons)...
+});
+
+
 // Dynamically Set Default Range from Input when users type in the #letters input
 function setDefaultRangeFromInput() {
   const letters = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
@@ -82,6 +201,7 @@ function setDefaultRangeFromInput() {
   lengthSlider.noUiSlider.set([newMin, adjustedMax]);
 }
 
+
 // Wildcard group button listener
 function setWildcard(button, count) {
   const group = button.parentElement;
@@ -95,6 +215,7 @@ function setWildcard(button, count) {
   // Update range slider when wildcard changes
   setDefaultRangeFromInput();
 }
+
 
 function updateSliderFromInput() {
   const letters = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
@@ -111,6 +232,7 @@ function updateSliderFromInput() {
 
   updateSummaryLabel?.();
 }
+
 
 function updateSummaryLabel() {
   const [min, max] = lengthSlider.noUiSlider.get().map(Number);
@@ -135,81 +257,23 @@ function updateSummaryLabel() {
   document.getElementById("summaryLabel").textContent = text;
 }
 
-// === ELEMENT SELECTORS ===
-const dropdownToggle = document.getElementById("dropdownToggle");
-const dropdownMenu = document.getElementById("dropdownMenu");
-const dropdownIcon = document.getElementById("dropdownIcon");
-const selectedOption = document.getElementById("selectedOption");
 
-const menuToggle = document.getElementById("menuToggle");
-const sideMenu = document.getElementById("sideMenu");
-const closeMenu = document.getElementById("closeMenu");
+// == Handle tile loader message ==
+function updateFlipTiles(message) {
+  const tileLoader = document.getElementById("resultsTileLoader");
 
-// === DROPDOWN LOGIC ===
-let currentSort = "score"; // default
+  // Clear current tiles
+  tileLoader.innerHTML = "";
 
-function initDropdown() {
-  dropdownToggle.addEventListener("click", () => {
-    const isOpen = dropdownMenu.classList.toggle("show");
-    dropdownToggle.classList.toggle("open", isOpen);
-  });
-
-  dropdownMenu.addEventListener("click", (e) => {
-    if (e.target.tagName === "LI") {
-      currentSort = e.target.getAttribute("data-value");
-      selectedOption.textContent = e.target.textContent;
-
-      dropdownMenu.querySelectorAll("li").forEach(li => li.classList.remove("selected"));
-      e.target.classList.add("selected");
-
-      dropdownMenu.classList.remove("show");
-      dropdownToggle.classList.remove("open");
-
-      findWords(); // trigger update with new sort
-    }
-  });
-
-  // Close dropdown when clicking outside
-  document.addEventListener("click", (e) => {
-    if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
-      dropdownMenu.classList.remove("show");
-      dropdownToggle.classList.remove("open");
-    }
+  // Create new tiles for each character in the message
+  [...message].forEach((char, i) => {
+    const tile = document.createElement("div");
+    tile.className = "flip-tile";
+    tile.textContent = char;
+    tile.style.setProperty("--i", i); // Preserve animation staggering
+    tileLoader.appendChild(tile);
   });
 }
-
-// === SIDE MENU LOGIC ===
-function initSideMenu() {
-  menuToggle.addEventListener("click", () => {
-    sideMenu.classList.add("open");
-  });
-
-  closeMenu.addEventListener("click", () => {
-    sideMenu.classList.remove("open");
-  });
-
-  sideMenu.querySelectorAll("a").forEach(link => {
-    link.addEventListener("click", () => {
-      sideMenu.classList.remove("open");
-    });
-  });
-
-  // Close side menu when clicking outside
-  document.addEventListener("click", (e) => {
-    // Close side menu if clicked outside
-    if (
-      sideMenu.classList.contains("open") &&
-      !sideMenu.contains(e.target) &&
-      !menuToggle.contains(e.target)
-    ) {
-      sideMenu.classList.remove("open");
-    }
-  });
-}
-
-// === INITIALIZE ===
-initDropdown();
-initSideMenu();
 
 
 function showToast(message, duration = 3000) {
@@ -222,7 +286,8 @@ function showToast(message, duration = 3000) {
   }, duration);
 }
 
-function findWords() {
+
+function findWords(mode = "search") {
   // 1. Get user inputs
   const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
   const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
@@ -263,6 +328,16 @@ function findWords() {
   resultsBar.style.display = "none";
   resultsTextLoader.style.display = "block";
   resultsTileLoader.style.display = "flex";
+
+  console.log("Mode: ", mode);
+  // Update the tile loader message
+  if (mode === "sort") {
+    resultsTextLoader.textContent = "Sorting...";
+    updateFlipTiles("SORT!");
+  } else {
+    resultsTextLoader.textContent = "Finding words…";
+    updateFlipTiles("FLIP!");
+  }
 
   // Prevent overlapping searches
   if (isSearching) return;
@@ -432,7 +507,7 @@ document.getElementById("requiredPosition").addEventListener("input", (e) => {
   e.target.value = cleaned;
 });
 
-// reset - start over button
+// === RESET LOGIC ===
 function resetAllFilters() {
   const resultsArea = document.getElementById("results");
 
@@ -476,42 +551,6 @@ function clearResults() {
   document.getElementById("resultsHeader").textContent = '';
   document.getElementById("resultsBar").style.display = "none";
 }
-
-
-// Dark theme logic
-const themeToggle = document.getElementById('themeToggle');
-
-themeToggle.addEventListener('click', () => {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  const isDark = currentTheme === 'dark';
-
-  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  themeToggle.textContent = isDark ? '🌞' : '🌙';
-  localStorage.setItem('theme', isDark ? 'light' : 'dark');
-});
-
-// DOM elements
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', saved);
-  themeToggle.textContent = saved === 'dark' ? '🌙' : '🌞';
-
-  updateSummaryLabel();
-
-  // To stagger each tile’s flip nicely, assign animation delays on page load:
-  document.querySelectorAll(".flip-tile").forEach((tile, i) => {
-    tile.style.setProperty("--i", i);
-  });
-
-  // bind the submit handler 
-  document.querySelector('.filters').addEventListener('submit', function (e) {
-    e.preventDefault();
-    console.log("Form submitted");
-    findWords();
-  });
-
-  // Add any other listeners here (like reset buttons, etc.)
-});
 
 
 // === Funny rotating intro messages ===
