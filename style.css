@@ -831,6 +831,42 @@ button:hover {
     transform: translateX(-50%) translateY(0);
 }
 
+/*  === scrollButtons === */
+#scrollButtons {
+    position: fixed;
+    bottom: 3rem;
+    right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+#scrollButtons.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+#scrollButtons button {
+    background-color: var(--primary-color, #4482C9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+#scrollButtons button:hover {
+    transform: translateY(-2px);
+}
+
 footer {
     margin-top: 20px;
     text-align: center;

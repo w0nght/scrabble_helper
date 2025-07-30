@@ -185,6 +185,26 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   // Add more listeners below (e.g., reset buttons)...
+
+  const scrollButtons = document.getElementById("scrollButtons");
+  const scrollToTopBtn = document.getElementById("scrollToTop");
+  const scrollToResultsBtn = document.getElementById("scrollToResults");
+
+  window.addEventListener("scroll", () => {
+    const y = window.scrollY;
+    scrollButtons.classList.toggle("show", y > 200); // only show if scrolled down a bit
+  });
+
+  scrollToTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  scrollToResultsBtn.addEventListener("click", () => {
+    const anchor = document.getElementById("resultsAnchor");
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: "smooth" });
+    }
+  });
 });
 
 
