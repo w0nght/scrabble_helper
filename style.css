@@ -635,7 +635,8 @@ button:hover {
     padding: 0;
 }
 
-.results-loader {
+.results-loader,
+.loader {
     text-align: center;
     color: var(--text-secondary);
     font-size: 1rem;

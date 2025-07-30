@@ -1,7 +1,9 @@
 // === GLOBAL ===
 let words = [];
 let currentSort = "score"; // default
-
+let currentMatches = []; // Store matches here
+let displayLimit = 30;   // Show 30 at a time
+let shownCount = 0;      // How many already shown
 let isSearching = false;
 let lengthSlider = document.getElementById('lengthRange');
 
@@ -177,6 +179,11 @@ window.addEventListener('DOMContentLoaded', () => {
   initDropdown();
   initSideMenu();
 
+  // === Wire up the "Show More" button ===
+  document.getElementById("showMoreBtn").addEventListener("click", () => {
+    renderNextBatch(true); // Tell it this is a user-triggered render
+  });
+
   // Add more listeners below (e.g., reset buttons)...
 });
 
@@ -320,6 +327,8 @@ function findWords(mode = "search") {
   const resultsBar = document.getElementById("resultsBar");
   const resultsTextLoader = document.getElementById("resultsTextLoader");
   const resultsTileLoader = document.getElementById("resultsTileLoader");
+  const showMoreBtn = document.getElementById("showMoreBtn");
+
   const MIN_FLIP_DURATION = 1400;
 
   // Clear previous results and show loading state
@@ -328,6 +337,7 @@ function findWords(mode = "search") {
   resultsBar.style.display = "none";
   resultsTextLoader.style.display = "block";
   resultsTileLoader.style.display = "flex";
+  showMoreBtn.style.display = "none";
 
   console.log("Mode: ", mode);
   // Update the tile loader message
@@ -439,33 +449,15 @@ function findWords(mode = "search") {
       // 10. Display results with fade-in animation
       const longestWordLength = Math.max(...matches.map(m => m.word.length));
 
-      matches.forEach((match, index) => {
-        const span = document.createElement("span");
+      // Save matches globally
+      currentMatches = matches;
+      shownCount = 0;
+      resultsContainer.innerHTML = ''; // Clear before initial display
+      renderNextBatch();
 
-        // Format the word: capitalize first letter, lowercase the rest
-        const formattedChars = match.word
-          .toLowerCase()
-          .split('')
-          .map((char, i) => {
-            let displayChar = i === 0 ? char.toUpperCase() : char;
-            if (match.wildcards.includes(i)) {
-              return `<span class="wildcard">${displayChar}</span>`;
-            }
-            return displayChar;
-          });
+      // Show pagination controls if more than 30
+      document.getElementById("paginationControls").style.display = matches.length > displayLimit ? "block" : "none";
 
-        span.innerHTML = formattedChars.join('') + ` <small>${match.score} pts</small>`;
-
-
-        // Mark high score words if desired
-        // if (!showAll && match.word.length === longestWordLength) {
-        //   span.classList.add("high-score");
-        // }
-
-        // Animate each result
-        span.style.animationDelay = `${index * 40}ms`;
-        resultsContainer.appendChild(span);
-      });
       // 11. Done searching
       isSearching = false; // Allow future calls again
     } catch (error) {
@@ -545,11 +537,88 @@ function resetAllFilters() {
   }, 400); // Matches CSS animation duration
 }
 
+// === BATCH RENDER ===
+function renderNextBatch(isTriggeredByShowMore = false) {
+  const batch = currentMatches.slice(shownCount, shownCount + displayLimit);
+  const container = document.getElementById("results");
+  const showMoreBtn = document.getElementById("showMoreBtn");
+  const showMoreLoader = document.getElementById("showMoreLoader");
+
+  // Always hide both first
+  showMoreBtn.style.display = "none";
+  showMoreLoader.style.display = "none";
+
+  const hasMore = shownCount + batch.length < currentMatches.length;
+
+  if (isTriggeredByShowMore) {
+    // Show loader right away
+    showMoreLoader.style.display = "block";
+
+    // Slight delay before rendering batch
+    setTimeout(() => {
+      showMoreLoader.style.display = "none";
+
+      batch.forEach((match, index) => {
+        const span = document.createElement("span");
+
+        const formattedChars = match.word
+          .toLowerCase()
+          .split('')
+          .map((char, i) => {
+            let displayChar = i === 0 ? char.toUpperCase() : char;
+            if (match.wildcards.includes(i)) {
+              return `<span class="wildcard">${displayChar}</span>`;
+            }
+            return displayChar;
+          });
+
+        span.innerHTML = formattedChars.join('') + ` <small>${match.score} pts</small>`;
+        span.style.animationDelay = `${index * 40}ms`;
+        container.appendChild(span);
+      });
+
+      shownCount += batch.length;
+
+      if (hasMore) {
+        showMoreBtn.style.display = "block";
+      }
+
+    }, 500); // Delay before rendering (matches "Loading more..." duration)
+  } else {
+    // Initial render (no loader)
+    batch.forEach((match, index) => {
+      const span = document.createElement("span");
+
+      const formattedChars = match.word
+        .toLowerCase()
+        .split('')
+        .map((char, i) => {
+          let displayChar = i === 0 ? char.toUpperCase() : char;
+          if (match.wildcards.includes(i)) {
+            return `<span class="wildcard">${displayChar}</span>`;
+          }
+          return displayChar;
+        });
+
+      span.innerHTML = formattedChars.join('') + ` <small>${match.score} pts</small>`;
+      span.style.animationDelay = `${index * 40}ms`;
+      container.appendChild(span);
+    });
+
+    shownCount += batch.length;
+
+    if (hasMore) {
+      showMoreBtn.style.display = "block";
+    }
+  }
+}
+
 
 function clearResults() {
   document.getElementById("results").innerHTML = '';
   document.getElementById("resultsHeader").textContent = '';
   document.getElementById("resultsBar").style.display = "none";
+  document.getElementById("showMoreBtn").style.display = "none";
 }
 
 
