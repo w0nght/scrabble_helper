@@ -29,7 +29,6 @@
     --toggle-btn-bg: #e9eef2;
     --shadow-color: rgba(0, 0, 0, 0.08);
     --shadow-color-strong: rgba(0, 0, 0, 0.12);
-    --highlight-color: goldenrod;
     --wild-card-color: #d49100;
     --main-font: 'M PLUS Rounded 1c', sans-serif;
     /* Font weights */
@@ -53,8 +52,8 @@
     --input-bg: #3c4043;
     --input-dropdown-hover-bg: #3b3b3b;
     --input-bg-secondary: #3c4043;
-    --button-bg: #8ab4f8;
-    --button-bg-hover: #9ac0f9;
+    --button-bg: #2c5b8a;
+    --button-bg-hover: #396da0;
     --button-text: #e8eaed;
     --reset-btn-bg: #444;
     --reset-btn-text: #ccc;
@@ -63,10 +62,8 @@
     --result-tile-bg: #3c4043;
     --toggle-btn-bg: #3c4043;
     --shadow-color: rgba(0, 0, 0, 0.3);
-    --wild-card-color: #d49100;
-    --wild-card-color: #d49100;
     --shadow-color-strong: rgba(0, 0, 0, 0.4);
-    --wild-card-color: #d49100;
+    --wild-card-color: #F59300;
 }
 
 body {
@@ -143,7 +140,7 @@ body::after {
 }
 
 #sideMenu a:hover {
-    color: var(--highlight-color);
+    color: var(--wild-card-color);
 }
 
 #closeMenu {
@@ -272,7 +269,7 @@ footer {
 }
 
 .tile.shared {
-    color: var(--highlight-color);
+    color: var(--wild-card-color);
 }
 
 .tile.empty {
@@ -351,7 +348,7 @@ select,
 }
 
 #lengthRange .noUi-connect {
-    background: var(--highlight-color);
+    background: var(--wild-card-color);
 }
 
 #lengthRange .noUi-tooltip {
@@ -398,7 +395,7 @@ select,
 /* Optional hover effect */
 #lengthRange .noUi-handle:hover {
     background: var(--input-bg-secondary);
-    border-color: var(--highlight-color);
+    border-color: var(--wild-card-color);
 }
 
 #lengthRange .noUi-pips {
@@ -685,8 +682,8 @@ button:hover {
 @media (max-width: 768px) {
     .flip-tile {
         font-size: 2.2em;
-        width: 34px;
-        height: 34px;
+        width: 28px;
+        height: 28px;
         line-height: 34px;
     }
 }
@@ -694,8 +691,8 @@ button:hover {
 @media (max-width: 480px) {
     .flip-tile {
         font-size: 1.8em;
-        width: 30px;
-        height: 30px;
+        width: 23px;
+        height: 23px;
         line-height: 30px;
     }
 }
@@ -758,7 +755,7 @@ button:hover {
 }
 
 #results .high-score {
-    color: var(--highlight-color);
+    color: var(--wild-card-color);
     font-weight: var(--font-medium);
 }
 
@@ -896,7 +893,7 @@ footer section {
 }
 
 .social-links a:hover {
-    color: var(--highlight-color);
+    color: var(--wild-card-color);
 }
 
 

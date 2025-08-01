@@ -365,7 +365,7 @@ function findWords(mode = "search") {
     resultsTextLoader.textContent = "Sorting...";
     updateFlipTiles("SORT!");
   } else {
-    resultsTextLoader.textContent = "Finding words…";
+    resultsTextLoader.textContent = "Finding words...";
     updateFlipTiles("FLIP!");
   }
 
@@ -649,7 +649,7 @@ const introMessages = [
   `We're not saying this is cheating... but your cousin Brian might raise an eyebrow. 😏 Let’s find the best words, shall we?`,
   `This tool isn’t cheating — it’s just <em>optimizing your genius</em>. Input your letters, and we’ll do the heavy lifting.`,
   `Your friendly neighborhood word whisperer. Drop your tiles in — we’ll take it from here. No judgment. 😉`,
-  `Shhh… we won’t say anything. Let’s win this game with charm and letters.`,
+  `Shhh... we won’t say anything. Let’s win this game with charm and letters.`,
   `Words are hard. That’s why you brought backup. Welcome aboard.`,
   `This isn't cheating — it's <em>enhanced vocabulary exploration</em>. Totally educational.`,
   `Type your letters in, and let this tool do what it does best: make you look brilliant.`,
@@ -657,11 +657,11 @@ const introMessages = [
   `Everyone has that one smart friend. This one just lives in your browser.`,
   `Cheating? Nah. It’s called <em>strategic assistance</em> — and it’s fabulous.`,
   `Just you, your letters, and a suspiciously smart web app. Let’s find that bingo, shall we?`,
-  `Just between us… this is how legends are made. Quietly. With great words. 😌`,
-  `You didn't hear this from me… but seven-letter words just magically happen here.`,
-  `Let’s call it… aggressive word support. Totally fair. Probably.`,
+  `Just between us... this is how legends are made. Quietly. With great words. 😌`,
+  `You didn't hear this from me... but seven-letter words just magically happen here.`,
+  `Let’s call it... aggressive word support. Totally fair. Probably.`,
   `Technically, you’re still playing Scrabble. You’re just playing it <em>better</em>.`,
-  `What happens in this tab… stays in this tab. 🕶️`,
+  `What happens in this tab... stays in this tab. 🕶️`,
   `It’s not about cheating. It’s about </em>clever resource management</em>.`
 ];
 
