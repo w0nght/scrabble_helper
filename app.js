@@ -92,9 +92,8 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   // === ELEMENT SELECTORS ===
-  const dropdownToggle = document.getElementById("dropdownToggle");
-  const dropdownMenu = document.getElementById("dropdownMenu");
   const selectedOption = document.getElementById("selectedOption");
+  const dropdowns = document.querySelectorAll(".dropdown-group");
 
   const menuToggle = document.getElementById("menuToggle");
   const sideMenu = document.getElementById("sideMenu");
@@ -103,37 +102,59 @@ window.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('.filters');
 
   // === DROPDOWN SORT LOGIC ===
-  function initDropdown() {
-    // Toggle menu on click
-    dropdownToggle.addEventListener("click", () => {
-      const isOpen = dropdownMenu.classList.toggle("show");
-      dropdownToggle.classList.toggle("open", isOpen);
-    });
+  function initDropdowns() {
 
-    // Handle option select
-    dropdownMenu.addEventListener("click", (e) => {
-      if (e.target.tagName === "LI") {
-        currentSort = e.target.getAttribute("data-value");
-        selectedOption.textContent = e.target.textContent;
+    dropdowns.forEach(dropdown => {
+      const toggle = dropdown.querySelector(".dropdown-toggle");
+      const menu = dropdown.querySelector(".dropdown-menu");
 
-        dropdownMenu.querySelectorAll("li").forEach(li => li.classList.remove("selected"));
-        e.target.classList.add("selected");
+      if (!toggle || !menu) return;
 
-        dropdownMenu.classList.remove("show");
-        dropdownToggle.classList.remove("open");
+      // Skip disabled dropdowns
+      if (toggle.classList.contains("disabled")) return;
 
-        findWords("sort"); // Trigger with "sort" mode
-      }
-    });
+      // Toggle menu on click
+      toggle.addEventListener("click", () => {
+        const isOpen = menu.classList.toggle("show");
+        toggle.classList.toggle("open", isOpen);
+      });
 
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
-      if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.remove("show");
-        dropdownToggle.classList.remove("open");
-      }
+      // Handle option selection
+      menu.addEventListener("click", (e) => {
+        if (e.target.tagName === "LI" && !e.target.classList.contains("disabled")) {
+          const value = e.target.getAttribute("data-value") || e.target.getAttribute("data-dict");
+          const label = e.target.textContent;
+
+          // Handle different dropdowns by ID or context
+          if (toggle.id === "dropdownToggle") {
+            currentSort = value;
+            document.getElementById("selectedOption").textContent = label;
+            findWords("sort");
+          } else if (toggle.id === "dictToggle") {
+            document.getElementById("selectedDict").textContent = label;
+            // Future: switch dictionary logic here...
+          }
+
+          // Highlight selected item
+          menu.querySelectorAll("li").forEach(li => li.classList.remove("selected"));
+          e.target.classList.add("selected");
+
+          // Close menu
+          menu.classList.remove("show");
+          toggle.classList.remove("open");
+        }
+      });
+
+      // Close on outside click
+      document.addEventListener("click", (e) => {
+        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove("show");
+          toggle.classList.remove("open");
+        }
+      });
     });
   }
+
 
   // === SIDE MENU LOGIC ===
   function initSideMenu() {
@@ -169,14 +190,8 @@ window.addEventListener('DOMContentLoaded', () => {
     findWords();
   });
 
-  // === SORT TRIGGER (Fallback via DOM mutation) ===
-  document.getElementById('dropdownToggle').addEventListener('DOMSubtreeModified', () => {
-    findWords("sort");
-    console.log("Perform sort (DOMSubtreeModified fallback)");
-  });
-
   // === INIT ===
-  initDropdown();
+  initDropdowns(); // Now supports both sort & dictionary
   initSideMenu();
 
   // === Wire up the "Show More" button ===

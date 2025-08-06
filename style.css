@@ -540,21 +540,35 @@ button:hover {
     color: var(--text-primary);
 }
 
-.sort-dropdown label {
+/* .sort-dropdown label {
     font-weight: var(--font-medium);
     color: var(--text-secondary);
-}
+} */
 
 /* Parent container must be positioned relatively */
 /* Dropdown container */
-.sort-dropdown.dropdown {
+/* .sort-dropdown.dropdown {
     position: relative;
     width: 100%;
     max-width: 280px;
+} */
+.dropdown-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
-/* Toggle Button */
-#dropdownToggle {
+.dropdown-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+}
+
+/* === General Dropdown Toggle === */
+.dropdown-toggle {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -564,20 +578,28 @@ button:hover {
     border-radius: 8px;
     padding: 12px 14px;
     cursor: pointer;
+    min-width: 180px;
+    gap: 0.5rem;
 }
 
 /* Chevron icon rotation when open */
-#dropdownToggle.open i {
+.dropdown-toggle.open i {
     transform: rotate(180deg);
     transition: transform 0.3s ease;
 }
 
-#dropdownIcon {
+.dropdown-toggle i {
     transition: transform 0.3s ease;
 }
 
-/* Dropdown Menu */
-#dropdownMenu {
+/* Disabled dropdown */
+.dropdown-toggle.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* === General Dropdown Menu === */
+.dropdown-menu {
     position: absolute;
     top: calc(100% + 4px);
     left: 0;
@@ -591,13 +613,13 @@ button:hover {
     padding: 4px 0;
 }
 
-#dropdownMenu.show {
+.dropdown-menu.show {
     display: block;
     animation: dropdownFade 0.2s ease;
 }
 
 /* Dropdown items */
-#dropdownMenu li {
+.dropdown-menu li {
     list-style: none;
     padding: 10px 16px;
     cursor: pointer;
@@ -605,15 +627,21 @@ button:hover {
     transition: background 0.2s ease;
 }
 
-#dropdownMenu li:hover {
+.dropdown-menu li:hover {
     background-color: var(--input-dropdown-hover-bg);
 }
 
-#dropdownMenu li.selected {
+.dropdown-menu li.selected {
     background-color: var(--highlight-bg);
     font-weight: var(--font-bold);
 }
 
+.dropdown-menu li.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* Dropdown animation */
 @keyframes dropdownFade {
     from {
         opacity: 0;

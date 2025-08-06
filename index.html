@@ -149,19 +149,37 @@
             </div>
 
             <div id="resultsBar" class="results-bar" style="display: none;">
-                <div id="resultsHeader" class="results-count">0 words found</div>
-                <div class="sort-dropdown dropdown">
-                    <div id="dropdownToggle">
-                        <span id="selectedOption">Score (High to Low)</span>
-                        <i id="dropdownIcon" class="fa-solid fa-chevron-down"></i>
+                <div class="dropdown-wrapper">
+                    <!-- Sort Dropdown -->
+                    <div class="dropdown-group">
+                        <span>Sort:</span>
+                        <div id="dropdownToggle" class="dropdown-toggle">
+                            <span id="selectedOption">Score (High to Low)</span>
+                            <i id="dropdownIcon" class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <ul id="dropdownMenu" class="dropdown-menu">
+                            <li data-value="alpha">Alphabetical (A to Z)</li>
+                            <li data-value="score" class="selected">Score (High to Low)</li>
+                            <li data-value="length-desc">Length (Long to Short)</li>
+                            <li data-value="length-asc">Length (Short to Long)</li>
+                        </ul>
                     </div>
-                    <ul id="dropdownMenu">
-                        <li data-value="alpha">Alphabetical (A to Z)</li>
-                        <li data-value="score" class="selected">Score (High to Low)</li>
-                        <li data-value="length-desc">Length (Long to Short)</li>
-                        <li data-value="length-asc">Length (Short to Long)</li>
-                    </ul>
+
+                    <!-- Dictionary Dropdown -->
+                    <div class="dropdown-group">
+                        <span>Dictionary</span>
+                        <div id="dictToggle" class="dropdown-toggle disabled">
+                            <span id="selectedDict">Collins 2019</span>
+                            <i class="fa-solid fa-caret-down"></i>
+                        </div>
+                        <ul id="dictMenu" class="dropdown-menu">
+                            <li data-dict="collins" class="selected">Collins 2019</li>
+                            <li data-dict="other" class="disabled">Other Dictionary (coming soon)</li>
+                        </ul>
+                    </div>
                 </div>
+
+                <div id="resultsHeader" class="results-count">0 words found</div>
             </div>
 
             <div id="results"></div>
