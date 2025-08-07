@@ -1,34 +1,13 @@
 // === GLOBAL ===
-let currentDict = "collins";
+let currentDict = localStorage.getItem("selectedDict") || "Collins_2019";
 let words = [];
-const dictionaryMap = {
-  collins: [],
-  twl06: [],
-  sowpods: []
-};
+const dictionaryMap = {};
 let currentSort = "score"; // default
 let currentMatches = []; // Store matches here
 let displayLimit = 30;   // Show 30 at a time
 let shownCount = 0;      // How many already shown
 let isSearching = false;
 let lengthSlider = document.getElementById('lengthRange');
-
-Promise.all([
-  fetch("Collins_2019.json").then(res => res.json()),
-  fetch("otcwl2016.json").then(res => res.json()),
-  fetch("sowpods.json").then(res => res.json())
-]).then(([collinsData, twlData, sowpodsData]) => {
-  dictionaryMap.collins = collinsData;
-  dictionaryMap.twl06 = twlData;
-  dictionaryMap.sowpods = sowpodsData;
-  words = dictionaryMap[currentDict];
-  console.log("Dictionaries loaded:", {
-    collins: collinsData.length,
-    twl06: twlData.length,
-    sowpods: sowpodsData.length
-  });
-});
-
 
 const letterScores = {
   A: 1, B: 3, C: 3, D: 2, E: 1,
@@ -100,6 +79,15 @@ window.addEventListener('DOMContentLoaded', () => {
   document.documentElement.setAttribute('data-theme', saved);
   themeToggle.textContent = saved === 'dark' ? '🌙' : '🌞';
 
+  // Load the initial dictionary
+  loadDictionary(currentDict);
+
+  // Update UI with remembered dictionary
+  const initialLabel = document.querySelector(`#dictMenu li[data-dict="${currentDict}"]`);
+  if (initialLabel) {
+    document.getElementById("selectedDict").textContent = initialLabel.textContent;
+  }
+
   updateSummaryLabel();
 
   // === STAGGER TILE ANIMATION ON PAGE LOAD ===
@@ -147,12 +135,12 @@ window.addEventListener('DOMContentLoaded', () => {
             document.getElementById("selectedOption").textContent = label;
             findWords("sort");
           } else if (toggle.id === "dictToggle") {
+            const selectedDict = value;
+            currentDict = selectedDict;
+            localStorage.setItem("selectedDict", selectedDict); // Save to local storage
             document.getElementById("selectedDict").textContent = label;
-            currentDict = value;
-            localStorage.setItem("selectedDict", currentDict); // Save to local storage
-            words = dictionaryMap[currentDict];
-            console.log("Switched dictionary:", currentDict, words.length);
-            findWords("search");
+            console.log("Switched dictionary:", selectedDict, words.length);
+            loadDictionary(selectedDict);
           }
 
           // Highlight selected item
@@ -201,6 +189,28 @@ window.addEventListener('DOMContentLoaded', () => {
         sideMenu.classList.remove("open");
       }
     });
+  }
+
+  // === CORE DICTIONARY LOGIC ===
+  function loadDictionary(dictKey) {
+    // If already loaded, use the cached version
+    if (dictionaryMap[dictKey]) {
+      words = dictionaryMap[dictKey];
+      findWords("search");
+      return;
+    }
+
+    // Otherwise, fetch and cache it
+    fetch(`./dictionaries/${dictKey}.json`)
+      .then(res => res.json())
+      .then(data => {
+        dictionaryMap[dictKey] = data;
+        words = data;
+        findWords("search");
+      })
+      .catch(err => {
+        console.error("Failed to load dictionary:", dictKey, err);
+      });
   }
 
   // === FORM SUBMIT HANDLER ===
