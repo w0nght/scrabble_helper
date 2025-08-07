@@ -385,7 +385,7 @@ function showToast(message, duration = 3000) {
 
 function findWords(mode = "search") {
   console.log("has interacted (in find words()):", hasInteracted);
-
+  console.log("🔍 findWords() called. Mode:", mode);
   // 1. Get user inputs
   const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
   const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
@@ -401,8 +401,6 @@ function findWords(mode = "search") {
     const resultsContainer = document.getElementById("results");
     const resultsHeader = document.getElementById("resultsHeader");
     const resultsBar = document.getElementById("resultsBar");
-
-
 
     resultsContainer.innerHTML = '';
     resultsHeader.textContent = '';
