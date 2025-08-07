@@ -75,7 +75,7 @@
             <form class="filters" autocomplete="off">
                 <div class="form-group">
                     <label class="section-label">Find words for Scrabble:</label>
-                    <input id="letters" type="text" class="scrabble-input" maxlength="15" placeholder="Enter letters" />
+                    <input id="letters" type="text" class="scrabble-input" maxlength="15" placeholder="Enter letters" inputmode="text" autocapitalize="none" autocomplete="off" spellcheck="false" />
                 </div>
 
                 <div class="form-group">
@@ -107,8 +107,8 @@
                     <div>
                         <div class="position-filter">
                             <div class="position-inputs">
-                                <input type="text" id="requiredLetter" placeholder="A–Z" maxlength="1" title="Enter a single letter A–Z" />
-                                <input type="text" id="requiredPosition" placeholder="1–12" maxlength="2" title="Enter a number between 1 and 12" />
+                                <input type="text" id="requiredLetter" placeholder="A–Z" maxlength="1" title="Enter a single letter A–Z" inputmode="text" autocapitalize="none" autocomplete="off" spellcheck="false" />
+                                <input type="text" id="requiredPosition" placeholder="1–12" maxlength="2" title="Enter a number between 1 and 12" inputmode="numeric" pattern="[0-9]*" />
                             </div>
                         </div>
                     </div>
