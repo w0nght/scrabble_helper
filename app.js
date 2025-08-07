@@ -7,6 +7,7 @@ let currentMatches = []; // Store matches here
 let displayLimit = 30;   // Show 30 at a time
 let shownCount = 0;      // How many already shown
 let isSearching = false;
+let hasInteracted = false;
 let lengthSlider = document.getElementById('lengthRange');
 
 const letterScores = {
@@ -28,6 +29,7 @@ function matchRequiredPosition(word, letter, pos) {
   return word[index] === letter;
 }
 
+// Initialize noUiSlider
 noUiSlider.create(lengthSlider, {
   start: [2, 8],         // Default values
   connect: true,         // Show range highlight
@@ -73,6 +75,7 @@ themeToggle.addEventListener('click', () => {
 });
 
 // === DOM READY INITIALIZATION ===
+// it handles direct interactions with the HTML document, like event listeners
 window.addEventListener('DOMContentLoaded', () => {
   // === APPLY SAVED THEME ===
   const saved = localStorage.getItem('theme') || 'light';
@@ -213,11 +216,31 @@ window.addEventListener('DOMContentLoaded', () => {
       });
   }
 
+  // === ALL EVENT LISTENERs ===
+
+  // input listener before the form submit handler - best practice
+  document.getElementById("letters").addEventListener("input", (e) => {
+    // Allow only A-Z letters, uppercase automatically
+    const cleaned = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+    e.target.value = cleaned;
+    // Update the min/max range based on total letters + wildcards
+    setDefaultRangeFromInput();
+  });
+
   // === FORM SUBMIT HANDLER ===
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (isSearching) return; // prevent double submits during search
+
+    hasInteracted = true;
+    console.log("set has interacted to -", hasInteracted);
     console.log("Form submitted");
     findWords();
+
+    // Delay reset so findWords can still access hasInteracted correctly
+    setTimeout(() => {
+      hasInteracted = false;// reset for next input session
+    }, 100);
   });
 
   // === INIT ===
@@ -250,6 +273,7 @@ window.addEventListener('DOMContentLoaded', () => {
       anchor.scrollIntoView({ behavior: "smooth" });
     }
   });
+
 });
 
 
@@ -360,6 +384,8 @@ function showToast(message, duration = 3000) {
 
 
 function findWords(mode = "search") {
+  console.log("has interacted (in find words()):", hasInteracted);
+
   // 1. Get user inputs
   const input = document.getElementById("letters").value.toUpperCase().replace(/[^A-Z]/g, '');
   const wildcardCount = parseInt(document.getElementById("wildcardCount").value || "0");
@@ -376,13 +402,17 @@ function findWords(mode = "search") {
     const resultsHeader = document.getElementById("resultsHeader");
     const resultsBar = document.getElementById("resultsBar");
 
-    // Scroll to results
-    document.getElementById("resultsAnchor").scrollIntoView({ behavior: "smooth" });
+
 
     resultsContainer.innerHTML = '';
     resultsHeader.textContent = '';
     resultsBar.style.display = "none";
-    resultsContainer.textContent = "Please enter some letters. 🙏";
+
+    if (hasInteracted) {
+      // Scroll to results
+      document.getElementById("resultsAnchor").scrollIntoView({ behavior: "smooth" });
+      resultsContainer.textContent = "Please enter some letters. 🙏";
+    }
     return;
   }
 
@@ -534,15 +564,6 @@ function findWords(mode = "search") {
     }
   }, MIN_FLIP_DURATION); // wait this long before rendering anything
 }
-
-document.getElementById("letters").addEventListener("input", (e) => {
-  // Allow only A-Z letters, uppercase automatically
-  const cleaned = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
-  e.target.value = cleaned;
-
-  // Update the min/max range based on total letters + wildcards
-  setDefaultRangeFromInput();
-});
 
 // Required Letter: only A–Z
 document.getElementById("requiredLetter").addEventListener("input", (e) => {
