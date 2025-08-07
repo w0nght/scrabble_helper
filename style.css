@@ -540,18 +540,6 @@ button:hover {
     color: var(--text-primary);
 }
 
-/* .sort-dropdown label {
-    font-weight: var(--font-medium);
-    color: var(--text-secondary);
-} */
-
-/* Parent container must be positioned relatively */
-/* Dropdown container */
-/* .sort-dropdown.dropdown {
-    position: relative;
-    width: 100%;
-    max-width: 280px;
-} */
 .dropdown-wrapper {
     display: flex;
     flex-wrap: wrap;
