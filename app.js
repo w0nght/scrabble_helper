@@ -353,10 +353,7 @@ function updateSummaryLabel() {
       : `Searching for words between ${min} and ${max} letters ${wildcardText}`;
   }
 
-  console.log("summaryLabel:", text);
-  console.log("min:", min);
-  console.log("max:", max);
-
+  console.log("summaryLabel: ", text);
   document.getElementById("summaryLabel").textContent = text;
 }
 
