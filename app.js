@@ -19,8 +19,15 @@ const letterScores = {
   Z: 10
 };
 
-function getWordScore(word) {
-  return word.split('').reduce((sum, char) => sum + (letterScores[char.toUpperCase()] || 0), 0);
+// Accepts an optional array of wildcard indices (positions that score 0)
+function getWordScore(word, wildcardIndices = []) {
+  // Convert wildcard indices to a Set for fast lookup
+  const wildSet = new Set(wildcardIndices);
+
+  return [...word].reduce((sum, char, idx) => {
+    if (wildSet.has(idx)) return sum; // wildcard — 0 points
+    return sum + (letterScores[char.toUpperCase()] || 0);
+  }, 0);
 }
 
 function matchRequiredPosition(word, letter, pos) {
@@ -497,7 +504,7 @@ function findWords(mode = "search") {
           matches.push({
             word,
             wildcards: wildcardIndices,
-            score: getWordScore(word)
+            score: getWordScore(word, wildcardIndices)
           });
         }
       }
