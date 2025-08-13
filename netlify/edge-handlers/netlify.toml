@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+  command = ""
+
+[[edge_handlers]]
+  path = "/*"
+  handler = "prerender"
