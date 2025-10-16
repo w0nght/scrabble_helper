@@ -102,36 +102,21 @@ export function clearResults() {
  * @param {number} longestLength - Length of longest word (for sizing)
  * @returns {HTMLElement} Word tile element
  */
-export function createWordTile(match, longestLength = 15) {
-    const tile = document.createElement('div');
-    tile.className = 'word-tile';
+export function createWordTile(match) {
+    const span = document.createElement('span');
 
-    // Word text
-    const wordText = document.createElement('span');
-    wordText.className = 'word-text';
-    wordText.textContent = match.word;
+    const formattedChars = match.word
+        .split('')
+        .map((char, i) => {
+            const displayChar = i === 0 ? char.toUpperCase() : char;
+            if (match.wildcards && match.wildcards.includes(i)) {
+                return `<span class="wildcard">${displayChar}</span>`;
+            }
+            return displayChar;
+        });
 
-    // Highlight wildcards if any
-    if (match.wildcards && match.wildcards.length > 0) {
-        wordText.innerHTML = match.word
-            .split('')
-            .map((letter, i) =>
-                match.wildcards.includes(i)
-                    ? `<span class="wildcard-letter">${letter}</span>`
-                    : letter
-            )
-            .join('');
-    }
-
-    // Score badge
-    const scoreBadge = document.createElement('span');
-    scoreBadge.className = 'score-badge';
-    scoreBadge.textContent = match.score;
-
-    tile.appendChild(wordText);
-    tile.appendChild(scoreBadge);
-
-    return tile;
+    span.innerHTML = formattedChars.join('') + ` <small>${match.score} pts</small>`;
+    return span;
 }
 
 /**
@@ -149,12 +134,9 @@ export function renderBatch(matches, startIndex = 0, batchSize = 30, longestLeng
     const batch = matches.slice(startIndex, endIndex);
 
     batch.forEach((match, index) => {
-        const tile = createWordTile(match, longestLength);
-
-        // Staggered animation delay
-        tile.style.animationDelay = `${index * 0.03}s`;
-
-        resultsContainer.appendChild(tile);
+        const span = createWordTile(match);
+        span.style.animationDelay = `${index * 40}ms`;
+        resultsContainer.appendChild(span);
     });
 
     return endIndex;

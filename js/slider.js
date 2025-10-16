@@ -42,7 +42,8 @@ export function setLengthRange(min, max) {
 export function setDefaultRangeFromInput() {
     if (!lengthSlider || !lengthSlider.noUiSlider) return;
     const letters = document.getElementById('letters')?.value?.toUpperCase().replace(/[^A-Z]/g, '') || '';
-    const wildcards = parseInt(document.getElementById('wildcardCount')?.value || '0');
+    const toggleActive = document.querySelector('#wildcardToggle .toggle-btn.active');
+    const wildcards = toggleActive ? parseInt(toggleActive.textContent.trim(), 10) : parseInt(document.getElementById('wildcardCount')?.value || '0');
     const total = letters.length + wildcards;
 
     const newMax = Math.min(15, Math.max(3, total));
@@ -56,7 +57,8 @@ export function setDefaultRangeFromInput() {
 export function updateSliderFromInput() {
     if (!lengthSlider || !lengthSlider.noUiSlider) return;
     const letters = document.getElementById('letters')?.value?.toUpperCase().replace(/[^A-Z]/g, '') || '';
-    const wildcards = parseInt(document.getElementById('wildcardCount')?.value || '0');
+    const toggleActive = document.querySelector('#wildcardToggle .toggle-btn.active');
+    const wildcards = toggleActive ? parseInt(toggleActive.textContent.trim(), 10) : parseInt(document.getElementById('wildcardCount')?.value || '0');
     const total = letters.length + wildcards;
 
     const newMax = Math.min(15, Math.max(3, total));
