@@ -546,6 +546,7 @@ button:hover {
     gap: 1.5rem;
     align-items: center;
     margin-bottom: 1rem;
+    width: 100%;
 }
 
 .dropdown-group {
@@ -553,6 +554,8 @@ button:hover {
     align-items: center;
     gap: 0.5rem;
     position: relative;
+    flex: 1 1 260px;
+    max-width: 100%;
 }
 
 /* === General Dropdown Toggle === */
@@ -566,7 +569,9 @@ button:hover {
     border-radius: 8px;
     padding: 12px 14px;
     cursor: pointer;
-    min-width: 180px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
     gap: 0.5rem;
 }
 
@@ -591,7 +596,7 @@ button:hover {
     position: absolute;
     top: calc(100% + 4px);
     left: 0;
-    right: 0;
+    right: auto;
     z-index: 10;
     background-color: var(--input-bg);
     border: 1px solid var(--border-color);
@@ -599,6 +604,7 @@ button:hover {
     box-shadow: 0 4px 12px var(--shadow-color);
     display: none;
     padding: 4px 0;
+    min-width: 100%;
 }
 
 .dropdown-menu.show {
@@ -983,6 +989,25 @@ footer section {
     .info-icon {
         display: inline;
         /* Ensure it's not hidden */
+    }
+
+    .results-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .dropdown-wrapper {
+        gap: 0.75rem;
+    }
+
+    .dropdown-group {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    .dropdown-toggle {
+        width: 100%;
     }
 }
 
