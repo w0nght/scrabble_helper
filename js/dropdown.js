@@ -185,6 +185,28 @@ export function updateDropdownLabel(toggleId, labelId, text) {
 }
 
 /**
+ * Programmatically set selected item for a dropdown by attribute/value
+ * @param {string} containerId - The id of the dropdown container (e.g., 'dictDropdown')
+ * @param {Object} options
+ * @param {string} options.attr - Attribute to match (e.g., 'data-value' or 'data-dict')
+ * @param {string} options.value - Value to match in the menu items
+ */
+export function setDropdownSelected(containerId, { attr = 'data-value', value } = {}) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const menu = container.querySelector('.dropdown-menu');
+    if (!menu) return;
+
+    const items = Array.from(menu.querySelectorAll('li'));
+    items.forEach(li => li.classList.remove(SELECTED_CLASS));
+
+    const match = items.find(li => li.getAttribute(attr) === value);
+    if (match) {
+        match.classList.add(SELECTED_CLASS);
+    }
+}
+
+/**
  * Programmatically close all dropdowns
  */
 export function closeAllDropdowns() {

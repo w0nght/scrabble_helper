@@ -1,7 +1,7 @@
 import { initializeTheme } from './js/theme.js';
 import { initializeSideMenu } from './js/sideMenu.js';
 import { initializeDictionary, switchDictionary, getCurrentWords } from './js/dictionary.js';
-import { initializeDropdowns, updateDropdownLabel } from './js/dropdown.js';
+import { initializeDropdowns, updateDropdownLabel, setDropdownSelected } from './js/dropdown.js';
 import { searchWords, sortMatches, validateInput, getLongestWordLength } from './js/search.js';
 import { getWordScore, getScoreStats } from './js/scoring.js';
 import { initializeInputHandlers, getFilterValues, setFormDisabled } from './js/inputHandler.js';
@@ -256,6 +256,12 @@ async function init() {
     'sortDropdown': handleSortChange,
     'dictDropdown': handleDictionaryChange
   });
+
+  // Ensure current dictionary is reflected/bolded in the menu
+  const currentDict = document.getElementById('selectedDict')?.textContent?.includes('OTCWL') ? 'otcwl2016' :
+    document.getElementById('selectedDict')?.textContent?.includes('SOWPODS') ? 'sowpods' :
+      'Collins_2019';
+  setDropdownSelected('dictDropdown', { attr: 'data-dict', value: currentDict });
 
   // Initialize input handlers
   initializeInputHandlers({
