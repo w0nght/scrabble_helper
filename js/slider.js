@@ -24,6 +24,10 @@ export function initializeSlider() {
     lengthSlider.noUiSlider.on('update', (values) => {
         if (minValueLabel) minValueLabel.textContent = values[0];
         if (maxValueLabel) maxValueLabel.textContent = values[1];
+        // Update summary when slider changes
+        if (typeof window.updateSummaryLabel === 'function') {
+            window.updateSummaryLabel();
+        }
     });
 }
 

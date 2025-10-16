@@ -226,6 +226,10 @@ function handleLettersChange(letters) {
   if (typeof setDefaultRangeFromInput === 'function') {
     setDefaultRangeFromInput();
   }
+  // Refresh summary when letters change
+  if (typeof updateSummaryLabel === 'function') {
+    updateSummaryLabel();
+  }
 }
 
 // ========================================
