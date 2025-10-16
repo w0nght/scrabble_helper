@@ -4,7 +4,7 @@
 
 It’s a *harmless little cheat* made to give you that “aha!” moment without the guilt — originally built to help me challenge my native-English-speaking partner!
 
-[🌐 Live Site →](https://w0nght.github.io/scrabble_helper/)
+[🌐 Live Site →](https://scrabble-helper.netlify.app/)
 
 ---
 
