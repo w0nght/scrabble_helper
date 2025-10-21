@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://scrabble-helper.netlify.app/sitemap.xml
