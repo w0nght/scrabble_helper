@@ -66,6 +66,11 @@
     --wild-card-color: #F59300;
 }
 
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px; /* Account for sticky header height */
+}
+
 body {
     font-family: var(--main-font);
     font-weight: var(--font-regular);
