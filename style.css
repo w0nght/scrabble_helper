@@ -154,7 +154,7 @@ body::after {
     margin-bottom: 10px;
 }
 
-#introText {
+#introText, .introMessage {
     text-align: center;
     margin: 0 auto;
     padding-bottom: 20px;
