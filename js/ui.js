@@ -218,11 +218,26 @@ export function updateResultStats(stats) {
 
 /**
  * Scroll to results section smoothly
+ * @param {string} anchorType - 'error' for resultsErrorHandlerAnchor, 'success' for resultsSuccessHandlerAnchor, or 'default' for resultsAnchor
  */
-export function scrollToResults() {
-    const resultsAnchor = document.getElementById('resultsAnchor');
-    if (resultsAnchor) {
-        resultsAnchor.scrollIntoView({ behavior: 'smooth' });
+export function scrollToResults(anchorType = 'default') {
+    let anchorId;
+
+    switch (anchorType) {
+        case 'error':
+            anchorId = 'resultsErrorHandlerAnchor';
+            break;
+        case 'success':
+            anchorId = 'resultsSuccessHandlerAnchor';
+            break;
+        default:
+            anchorId = 'resultsErrorHandlerAnchor';
+            break;
+    }
+
+    const anchor = document.getElementById(anchorId);
+    if (anchor) {
+        anchor.scrollIntoView({ behavior: 'smooth' });
     }
 }
 

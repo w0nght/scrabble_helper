@@ -648,10 +648,8 @@ button:hover {
     }
 }
 
-#resultsAnchor {
-    height: 1px;
-    margin: 0;
-    padding: 0;
+#resultsSuccessHandlerAnchor, #resultsErrorHandlerAnchor {
+    height: 0px;
 }
 
 .results-loader,
