@@ -34,6 +34,12 @@ export function setupLetterInput(inputId, callbacks = {}) {
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && callbacks.onEnter) {
             e.preventDefault();
+            
+            // Close keyboard on mobile/tablet devices
+            if (input.blur) {
+                input.blur();
+            }
+            
             callbacks.onEnter();
         }
     });
@@ -56,6 +62,12 @@ export function setupFormSubmit(formId, onSubmit) {
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+        
+        // Close keyboard on mobile/tablet devices
+        const activeElement = document.activeElement;
+        if (activeElement && activeElement.blur) {
+            activeElement.blur();
+        }
 
         if (onSubmit) {
             onSubmit(e);

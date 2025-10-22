@@ -84,7 +84,7 @@ function findWords(mode = 'search') {
   const validation = validateInput(filters.letters, filters.wildcardCount);
   if (!validation.valid) {
     if (hasInteracted) {
-      scrollToResults();
+      scrollToResults('error');
       showEmptyState(validation.error);
     }
     return;
@@ -100,7 +100,7 @@ function findWords(mode = 'search') {
   // Show loading state
   showLoadingState(mode);
   setFormDisabled(true);
-  scrollToResults();
+  scrollToResults('success');
 
   // Perform search after animation delay
   setTimeout(() => {
@@ -128,6 +128,7 @@ function findWords(mode = 'search') {
 
       // Handle no results
       if (sortedMatches.length === 0) {
+        scrollToResults('error');
         if (stats.skippedDueToPosition > 0) {
           showEmptyState('No words match the required letter at that position. 😬');
         } else {
@@ -148,6 +149,9 @@ function findWords(mode = 'search') {
 
       // Show pagination if needed
       showPaginationControls(sortedMatches.length > DISPLAY_LIMIT);
+
+      // Scroll to success anchor when results are found
+      scrollToResults('success');
 
       // Log score stats
       const scoreStats = getScoreStats(sortedMatches);
@@ -286,60 +290,6 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
-
-// === DOM READY INITIALIZATION ===
-// it handles direct interactions with the HTML document, like event listeners
-window.addEventListener('DOMContentLoaded', () => {
-
-  // === ELEMENT SELECTORS ===
-  const selectedOption = document.getElementById("selectedOption");
-  const dropdowns = document.querySelectorAll(".dropdown-group");
-
-
-  const form = document.querySelector('.filters');
-
-  const scrollButtons = document.getElementById("scrollButtons");
-  const scrollToTopBtn = document.getElementById("scrollToTop");
-  const scrollToResultsBtn = document.getElementById("scrollToResults");
-
-  window.addEventListener("scroll", () => {
-    const y = window.scrollY;
-    scrollButtons.classList.toggle("show", y > 200); // only show if scrolled down a bit
-  });
-
-  scrollToTopBtn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-
-  scrollToResultsBtn.addEventListener("click", () => {
-    const anchor = document.getElementById("resultsAnchor");
-    if (anchor) {
-      anchor.scrollIntoView({ behavior: "smooth" });
-    }
-  });
-
-});
-
-
-// Required Letter: only A–Z
-document.getElementById("requiredLetter").addEventListener("input", (e) => {
-  const cleaned = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
-  e.target.value = cleaned.slice(0, 1); // enforce max 1 letter
-});
-
-// Required Position: only 1–12
-document.getElementById("requiredPosition").addEventListener("input", (e) => {
-  let cleaned = e.target.value.replace(/[^0-9]/g, '');
-
-  if (cleaned !== '') {
-    let number = parseInt(cleaned, 10);
-    if (number < 1) number = 1;
-    if (number > 12) number = 12;
-    cleaned = number.toString();
-  }
-
-  e.target.value = cleaned;
-});
 
 // === Funny rotating intro messages ===
 const introMessages = [
