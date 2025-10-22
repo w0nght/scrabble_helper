@@ -1,5 +1,5 @@
 import { getLengthRange, setLengthRange, setDefaultRangeFromInput } from './slider.js';
-import { clearResults } from './ui.js';
+import { clearResults, showMoreButton } from './ui.js';
 
 function updateSummaryLabel() {
     const [min, max] = getLengthRange();
@@ -67,6 +67,7 @@ function resetAllFilters() {
         }
 
         clearResults();
+        showMoreButton(false); // Hide Show More button on reset
         updateSummaryLabel();
 
         resultsArea?.classList.remove('wipe-out');
@@ -116,7 +117,7 @@ function initializeScrollButtons() {
 
     if (scrollToResultsBtn) {
         scrollToResultsBtn.addEventListener('click', () => {
-            const anchor = document.getElementById('resultsAnchor');
+            const anchor = document.getElementById('resultsErrorHandlerAnchor');
             if (anchor) anchor.scrollIntoView({ behavior: 'smooth' });
         });
     }
@@ -135,5 +136,3 @@ export function initializeUIControls() {
     window.setWildcard = setWildcard;
     window.resetAllFilters = resetAllFilters;
 }
-
-
