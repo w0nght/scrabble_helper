@@ -162,15 +162,21 @@ footer {
     margin: 0 auto;
     background-color: var(--container-bg);
     padding: 30px;
+    margin-bottom: 10px;
     border-radius: 16px;
     box-shadow: 0 10px 30px var(--shadow-color);
     border: 2px solid var(--border-color);
 }
 
-.container {
-    margin-top: 80px;
-    /* Adjust depending on the height of your headerBar */
+/* Container margins moved to individual children */
+.container > *:first-child {
+    margin-top: 40px;
 }
+
+ section {
+    text-align: center;
+    font-size: 0.95em;
+ }
 
 /* === LOGO === */
 .scrabble-logo-wrapper {
@@ -885,7 +891,6 @@ button:hover {
 }
 
 footer {
-    margin-top: 20px;
     text-align: center;
     font-size: 0.95em;
 }
@@ -893,10 +898,6 @@ footer {
 footer h3 {
     color: var(--text-primary);
     margin-bottom: 10px;
-}
-
-footer section {
-    padding: 20px 20px;
 }
 
 .social-links {
